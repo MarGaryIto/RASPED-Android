@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="40dp"
+    tools:context="com.example.adminprospera.rasped_tool.PersonalActivity"
+    android:orientation="vertical">
+
+    <!--Nombre ImageView y EditText-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_usuario_light"
+            android:contentDescription="@string/st_nombre"/>
+
+        <EditText
+            android:id="@+id/et_pe_nombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/st_nombre"/>
+    </LinearLayout>
+
+    <!--Apellido paterno ImageView y EditText-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_more_horiz_light"
+            android:contentDescription="@string/st_apPaterno"/>
+
+        <EditText
+            android:id="@+id/et_pe_apPaterno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/st_apPaterno"/>
+    </LinearLayout>
+
+    <!--Apellido materno ImageView y EditText-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_more_horiz_light"
+            android:contentDescription="@string/st_apPMaterno"/>
+
+        <EditText
+            android:id="@+id/et_pe_apMaterno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/st_apPMaterno"/>
+    </LinearLayout>
+
+    <!--Telefono ImageView y EditText-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_telefono_light"
+            android:contentDescription="@string/st_telefono"/>
+        <EditText
+            android:id="@+id/et_pe_lada"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/st_lada"/>
+        <EditText
+            android:id="@+id/et_pe_telefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/st_telefono"/>
+    </LinearLayout>
+
+    <!--Horarios ImageView y EditText-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_horario_light"
+            android:contentDescription="@string/st_horario"/>
+
+        <Spinner
+            android:id="@+id/sp_pe_horario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/st_horario">
+        </Spinner>
+    </LinearLayout>
+
+    <!--Horarios ImageView y EditText-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_puesto_light"
+            android:contentDescription="@string/st_puesto"/>
+
+        <Spinner
+            android:id="@+id/sp_pe_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/st_puesto">
+        </Spinner>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="st_version">V 1.0</string>
+    <string name="st_bienvenido">Bienvenido</string>
+    <string name="ms_acceder">Inicia sesión para comenzar</string>
+    <string name="st_contrasena">Contraseña</string>
+    <string name="st_telefono">Telefono</string>
+    <string name="st_acceder">Acceder</string>
+    <string name="ms_restablecerContrasena">Restablecer mi contraseña</string>
+    <string name="st_personal">Personal</string>
+    <string name="st_horarios">Horarios</string>
+    <string name="st_puestos">Puestos</string>
+    <string name="st_configuracion">Configuraciones</string>
+    <string name="st_hoy">Hoy</string>
+    <string name="st_semanal">semanal</string>
+    <string name="st_mensual">Mensual</string>
+    <string name="st_escanear">Escanear</string>
+    <string name="st_capturar">Capturar</string>
+    <string name="title_activity_usuario">Usuario</string>
+    <string name="title_activity_registrador">Registrador</string>
+    <string name="title_activity_administrador">Administrador</string>
+    <string name="ms_camposVacios">No deje campos vacios</string>
+    <string name="title_activity_usuarios">Usuarios</string>
+    <string name="st_nombre">Nombre (s)</string>
+    <string name="st_apPMaterno">Apellido Materno</string>
+    <string name="st_apPaterno">Apellido Paterno</string>
+    <string name="st_horario">Horarios</string>
+    <string name="st_puesto">Puesto</string>
+    <string name="st_lada">Lada</string>
+    <string name="ms_usuarioNoEncontrado">usuario no encontrado</string>
+    <string name="ms_credencialesIncorrectas">Contraseña o telefono incorrectos</string>
+</resources>

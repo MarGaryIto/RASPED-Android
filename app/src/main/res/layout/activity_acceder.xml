@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.adminprospera.rasped_tool.AccederActivity"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/st_bienvenido"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="30sp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher"
+            android:contentDescription="@string/app_name"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ms_acceder"
+            android:textColor="@color/colorBlueGray"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:paddingStart="80dp"
+        android:paddingEnd="80dp"
+        android:paddingTop="30dp"
+        android:orientation="vertical">
+        <EditText
+            android:id="@+id/et_ac_telefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/st_telefono"
+            android:inputType="phone"
+            android:maxLength="10"
+            android:maxLines="1"
+            android:theme="@style/themeEditTextDark"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="#cccc"/>
+        <EditText
+            android:id="@+id/et_ac_contrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="30dp"
+            android:hint="@string/st_contrasena"
+            android:inputType="textPassword"
+            android:maxLength="15"
+            android:maxLines="1"
+            android:theme="@style/themeEditTextDark"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="#cccc"/>
+
+        <Button
+            android:id="@+id/bt_ac_acceder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/st_acceder"
+            android:textColor="@color/colorWhite"
+            android:textAllCaps="false"
+            android:background="@drawable/bk_boton_accent"/>
+
+        <TextView
+            android:id="@+id/tv_ac_restaurarContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:gravity="end"
+            android:text="@string/ms_restablecerContrasena"
+            android:textColor="@color/colorBlueGray_B65"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.adminprospera.rasped_tool.SplashActivity">
+
+
+    <ImageView
+        android:id="@+id/iv_sp_splashBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        app:srcCompat="@drawable/splah_rasped_rm"
+        android:scaleType="fitXY"
+        android:contentDescription="@string/app_name"/>
+
+    <ImageView
+        android:id="@+id/iv_sp_icono"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        app:srcCompat="@drawable/splah_rasped_rm_icon"
+        android:contentDescription="@string/app_name"/>
+
+    <TextView
+        android:id="@+id/tv_sp_appName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="88dp"
+        android:text="@string/app_name"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="60sp"
+        android:layout_above="@+id/tv_versionRasped"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/tv_versionRasped"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="38dp"
+        android:layout_marginStart="21dp"
+        android:layout_toEndOf="@+id/tv_sp_appName"
+        android:text="@string/st_version"
+        android:textSize="20sp"
+        android:textColor="@color/colorWhite"/>
+</RelativeLayout>

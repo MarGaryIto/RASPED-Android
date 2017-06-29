@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name" translatable="false">RASPED</string>
+    <string name="st_version">V 1.0</string>
+    <string name="st_bienvenido">Welcome</string>
+    <string name="ms_acceder">Sign in to start</string>
+    <string name="st_contrasena">Passsword</string>
+    <string name="st_telefono">Telephone</string>
+    <string name="st_acceder">Sing in</string>
+    <string name="ms_restablecerContrasena">Restore password</string>
+    <string name="st_personal">Staff</string>
+    <string name="st_horarios">Schedules</string>
+    <string name="st_puestos">Rols</string>
+    <string name="st_configuracion">Settings</string>
+    <string name="title_activity_administrador">Administrador</string>
+    <string name="title_activity_usuario">User</string>
+    <string name="title_activity_usuarios">Users</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="st_hoy">Today</string>
+    <string name="st_semanal">week</string>
+    <string name="st_mensual">Month</string>
+    <string name="st_escanear">To scan</string>
+    <string name="st_capturar">To type</string>
+    <string name="title_activity_registrador">Typer</string>
+    <string name="ms_camposVacios">Do not leave blank fields</string>
+    <string name="st_nombre">First Name</string>
+    <string name="st_apPMaterno">Last Name</string>
+    <string name="st_apPaterno">Last Name</string>
+    <string name="st_horario">shifts</string>
+    <string name="st_puesto">Rol</string>
+    <string name="st_lada">Lada</string>
+    <string name="ms_usuarioNoEncontrado">User not found</string>
+    <string name="ms_credencialesIncorrectas">Incorrect password or phone number</string>
+</resources>
