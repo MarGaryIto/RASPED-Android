@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.Timer;
@@ -19,8 +20,8 @@ import java.util.TimerTask;
 
 public class SplashActivity extends AppCompatActivity {
 
-    //duracion del splash, 3 segundos
-    private static final long SPLASH_SCREEN_DELAY = 3000;
+    //duracion del splash, 2 segundos
+    private static final long SPLASH_SCREEN_DELAY = 2000;
     ImageView iv_sp_icono;
     Animation dezp_derecha,dezp_izquierda;
     TextView tv_sp_appName;
@@ -52,16 +53,15 @@ public class SplashActivity extends AppCompatActivity {
         //extrae datos temporales
         evaluaCache();
 
-        //cerar este layout
-        cerrarSplash();
-
     }
 
     //metodo privado para evaluar desde datos temporales, si ya se inicio sesion
     private void evaluaCache(){
-        SharedPreferences sp_datosUsuario = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String idPersonal = sp_datosUsuario.getString("id_personal","null");
-        switch (idPersonal){
+        Context context = this.getApplicationContext();
+        SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
+        String usuario = sp_datosPersonal.getString(getString(R.string.sp_usuarioPersonal_key),null);
+        mostrarToast("usuario");
+        switch (usuario){
             case "root":
                 //codigo para usuario root
                 break;
@@ -75,34 +75,84 @@ public class SplashActivity extends AppCompatActivity {
                 abrirUsusariosActivity();
                 break;
             default:
-                //en caso de no existir un usuario, continuar la actividad default del splash
+                //cerar este layout y continuar con logg en caso de no existir algun usuario
+                abrirAccederActivity();
                 break;
         }
     }
 
+    //metodo privado que mostrara un toast, de mensaje contendra variables
+    private void mostrarToast(String mensaje){
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, mensaje, duration);
+        toast.show();
+    }
+
     //metodo privada para abrir administradorActivity
     private void abrirAdministradorActivity(){
-        Intent intent = new Intent(this, AdministradorActivity.class);
-        startActivityForResult(intent,0);
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                //script para abrir AdministradorActivity
+                Intent intent = new Intent().setClass(SplashActivity.this,AdministradorActivity.class);
+                startActivity(intent);
+
+                //cerrar splashActivity (actual activity)
+                finish();
+            }
+        };
+
+        //ejecutar tiempo de espera para simular la carga de la aplicacion
+        Timer timer = new Timer();
+        timer.schedule(task, SPLASH_SCREEN_DELAY);
     }
 
     //metodo privada para abrir usuariosActivity
     private void abrirUsusariosActivity(){
-        Intent intent = new Intent(this, UsuariosActivity.class);
-        startActivityForResult(intent,0);
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                //script para abrir UsuariosActivity
+                Intent intent = new Intent().setClass(SplashActivity.this,UsuariosActivity.class);
+                startActivity(intent);
+
+                //cerrar splashActivity (actual activity)
+                finish();
+            }
+        };
+
+        //ejecutar tiempo de espera para simular la carga de la aplicacion
+        Timer timer = new Timer();
+        timer.schedule(task, SPLASH_SCREEN_DELAY);
     }
 
     //metodo privado para abrir registradorActivity
     private void abrirRegistradorActivity(){
-        Intent intent = new Intent(this, RegistradorActivity.class);
-        startActivityForResult(intent,0);
-    }
-
-    private void cerrarSplash(){
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                //script para brir accederActivity
+                //script para abrir RegistradorActivity
+                Intent intent = new Intent().setClass(SplashActivity.this,RegistradorActivity.class);
+                startActivity(intent);
+
+                //cerrar splashActivity (actual activity)
+                finish();
+            }
+        };
+
+        //ejecutar tiempo de espera para simular la carga de la aplicacion
+        Timer timer = new Timer();
+        timer.schedule(task, SPLASH_SCREEN_DELAY);
+
+    }
+
+    private void abrirAccederActivity(){
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                //script para abrir AccederActivity
                 Intent intent = new Intent().setClass(SplashActivity.this,AccederActivity.class);
                 startActivity(intent);
 

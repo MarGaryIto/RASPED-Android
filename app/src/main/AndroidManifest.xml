@@ -23,7 +23,6 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-
             </intent-filter>
         </activity>
         <activity android:name=".AccederActivity" />
@@ -31,7 +30,6 @@
             android:name=".AdministradorActivity"
             android:label="@string/title_activity_administrador"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".PersonalActivity" />
         <activity
             android:name=".RegistradorActivity"
             android:label="@string/title_activity_registrador"
@@ -39,7 +37,15 @@
         <activity
             android:name=".UsuariosActivity"
             android:label="@string/title_activity_usuarios"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".HorariosActivity"
+            android:parentActivityName=".AdministradorActivity" />
+        <activity android:name=".PersonalActivity" />
+        <activity
+            android:name=".ConfiguracionActivity"
+            android:label="@string/title_activity_configuracion" />
+        <activity android:name=".InformacionActivity"/>
     </application>
 
 </manifest>

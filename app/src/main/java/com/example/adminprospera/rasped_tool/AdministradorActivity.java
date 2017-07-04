@@ -1,11 +1,15 @@
 package com.example.adminprospera.rasped_tool;
 
+import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.RequiresApi;
+import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -14,7 +18,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import java.util.ArrayList;
@@ -26,7 +36,8 @@ public class AdministradorActivity extends AppCompatActivity {
     TabLayout tl_ad;
     ViewPager vp_ad;
     ListView lv_ad_personal;
-    FloatingActionButton fab_administrador;
+    FloatingActionButton fab_personal,fab_horarios,fab_puestos;
+    Toolbar tb_ad;
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -45,34 +56,114 @@ public class AdministradorActivity extends AppCompatActivity {
         vp_ad = (ViewPager) findViewById(R.id.vp_ad);
         tl_ad = (TabLayout) findViewById(R.id.tl_ad);
         lv_ad_personal = (ListView) findViewById(R.id.lv_ad_personal);
-        fab_administrador = (FloatingActionButton) findViewById(R.id.fab_administrador);
+        fab_personal = (FloatingActionButton) findViewById(R.id.fab_anadeUsuario);
+        fab_horarios = (FloatingActionButton) findViewById(R.id.fab_anadeHorario);
+        fab_puestos = (FloatingActionButton) findViewById(R.id.fab_anadePuesto);
+        tb_ad = (Toolbar) findViewById(R.id.tb_ad);
 
         //poblar el viewPager con su TabLayout (pestañas y contenido de ellas)
         setupViewPager(vp_ad);
         tl_ad.setupWithViewPager(vp_ad);
 
-        //animar y configurar el Floating Action Buttons (FAB)
-        cerrarFAB();
-        configurarFABPersonal();
-        tareaDelFAB();
+        //configurar los Floating Action Buttons (FAB) y sus respectivas tareas
+        cerrarTodosFAB();
+        abrirFAB(fab_personal);
+        TareasFAB();
 
-        //llenado e impresion del arreglo
-        //llenarArreglo();
-        //mostrarToast(arraryPersonal[0]);
+        //asignar un escuchador para el vp_ad en caso de ser scrolleado,seleccionado un item
+        vp_ad.addOnPageChangeListener(onPageChangeListener);
 
-        //establecer un adaptador que contendra el estilo y el arreglo de datos para el lv_ad_personal
-        //ArrayAdapter<String> adapter = new ArrayAdapter<>(this,R.layout.lay_list_view,R.id.tv_nombreItem,arrayIdSedes);
+        //poblar titulo y subtitulo de ActionBar
+        poblarActionBar();
 
-        //asignar al lv_ad_personal el adaptador adapter que contiene los datos y estilo
-        //lv_ad_personal.setAdapter(adapter);
+        //ArrayAdapter arrayAdapter = new ArrayAdapter(this.getApplicationContext()),
+         //       android.R.layout.simple_list_item_1, cosasPorHacer);
 
     }
 
-    private void tareaDelFAB(){
-        fab_administrador.setOnClickListener(new View.OnClickListener() {
+    private void asignaMenu(){
+        tb_ad.getMenu();
+    }
+
+    /*//metodo para asignarle un toolbar personalizado a PersonalActivity
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.ab_personal, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    //metodo que devuelve algun item seleccionado del toolbar
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.it_configuracion:
+                abrirConfiguracionActivity();
+                return true
+               ;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }*/
+
+
+    //declaracion del escuchador para asignarse a un ViewPager
+    ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            //devuelve valores del la pagina scrolleada
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            //devuelve un numero entero para indicar la pestaña activa o seleccionada desde el 0
+            //al activar o seleccionar una nueva pestaña cerrar cualquier FAB abierto
+            cerrarTodosFAB();
+
+            //posterior a cerrar un FAB anterior, se abrira un nuevo FAB segun su pestaña
+            switch (position){
+                case 0:
+                    //en caso de que la pestaña activa sea la 0 abrir el fab de añadir personal
+                    abrirFAB(fab_personal);
+                    break;
+                case 1:
+                    //en caso de que la pestaña activa sea la 1 abrir el fab de añadir horario
+                    abrirFAB(fab_horarios);
+                    break;
+                case 2:
+                    //en caso de que la pestaña activa sea la 2 abrir el fab de añadir puesto
+                    abrirFAB(fab_puestos);
+                    break;
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+            //devuelve es estado del scroll en un identificador de tipo int
+        }
+    };
+
+    //metodo privado que asigna a los FAB un escuchador y una accion al ser activados respectivamente
+    private void TareasFAB(){
+        //escuchador y actividad para el FAB de añadir personal
+        fab_personal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 abrirPersonalActivity();
+            }
+        });
+        //escuchador y actividad para el FAB de añadir horario
+        fab_horarios.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                abrirHorariosActivity();
+            }
+        });
+        //escuchador y actividad para el FAB de añadir puesto
+        fab_puestos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sbrirPuestosActivity();
             }
         });
     }
@@ -84,19 +175,65 @@ public class AdministradorActivity extends AppCompatActivity {
         //finish();
     }
 
-    //metodo para animaciones del FAB
-    private void cerrarFAB(){
-        fab_administrador.setScaleX(0);
-        fab_administrador.setScaleY(0);
+    //metodo privado para abrir horariosActivity
+    private void abrirHorariosActivity(){
+        Intent intent = new Intent(this, HorariosActivity.class);
+        startActivityForResult(intent,0);
+        //finish();
     }
 
-    //metodo para animaciones del FAB
-    private void configurarFABPersonal(){
-        fab_administrador.animate()
+    //metodo privado para abrir puestosActivity
+    private void sbrirPuestosActivity(){
+        Intent intent = new Intent(this, PersonalActivity.class);
+        startActivityForResult(intent,0);
+        //finish();
+    }
+
+    //metodo privado para abrir confiuracionActivity
+    private void abrirConfiguracionActivity(){
+        Intent intent = new Intent(this, ConfiguracionActivity.class);
+        startActivityForResult(intent,0);
+        //finish();
+    }
+
+    //metodo para cerrar un FAB con su respectiva animacion
+    private void cerrarFAB(FloatingActionButton FAB){
+        FAB.animate()
+                .scaleX(0)
+                .scaleY(0)
+                .setDuration(400);
+        FAB.hide();
+    }
+
+    //metodo para abrir un FAB con su respectiva animacion
+    private void abrirFAB(FloatingActionButton FAB){
+        FAB.show();
+        FAB.setScaleX(0);
+        FAB.setScaleY(0);
+        FAB.animate()
                 .scaleX(1)
                 .scaleY(1)
-                .setDuration(600)
-                .setStartDelay(1000);
+                .setDuration(400);
+    }
+
+    //metodo privado que cierra todos los FAB
+    private void cerrarTodosFAB(){
+        cerrarFAB(fab_horarios);
+        cerrarFAB(fab_personal);
+        cerrarFAB(fab_puestos);
+    }
+
+    //metodo privado para asignarle titulo y subtitulo al toolbar con los datos de usuario
+    private void poblarActionBar(){
+        Context context = this.getApplicationContext();
+        SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
+        String cupo = sp_datosPersonal.getString(getString(R.string.sp_cupoPersonal_key),null);
+        String nombre_personal = sp_datosPersonal.getString(getString(R.string.sp_nombrePersonal_key),null);
+        String apellidos = sp_datosPersonal.getString(getString(R.string.sp_apellidosPersonal_key),null);
+        String telefono = sp_datosPersonal.getString(getString(R.string.sp_telefonoPersonal_key),null);
+        String puesto = sp_datosPersonal.getString(getString(R.string.sp_puestoPersonal_key),null);
+        tb_ad.setTitle(puesto +" | "+ nombre_personal +" "+ apellidos);
+        tb_ad.setSubtitle(cupo +" | "+ telefono);
     }
 
     //metodo privado que codifica el contenido del viewPager(pestañas superiores)

@@ -1,5 +1,6 @@
 package com.example.adminprospera.rasped_tool;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,7 +32,6 @@ public class AccederActivity extends AppCompatActivity {
     String[] arrayIdSedes = null;
     JSONArray jsonArray = null;
     URL url = null;
-    private static final String PREFS_NAME = "datosUsuario";
 
 
     @Override
@@ -93,7 +93,7 @@ public class AccederActivity extends AppCompatActivity {
                     //una vez extraido el tipo de usuario, se evalua la contraseña
                     if(evaluaContrasena()){
                         abrirAdministradorActivity();
-                        poblarCacheDatosPersonal();
+                        almacenarDatosPersonal();
                     }
 
                     //evaluacion para el usuario registrador
@@ -101,7 +101,6 @@ public class AccederActivity extends AppCompatActivity {
                     //una vez extraido el tipo de usuario, se evalua la contraseña
                     if (evaluaContrasena()){
                         abrirRegistradorActivity();
-                        poblarCacheDatosPersonal();
                     }
 
                     //evaluacion para el usuario en general
@@ -109,7 +108,6 @@ public class AccederActivity extends AppCompatActivity {
                     //una vez extraido el tipo de usuario, se evalua la contraseña
                     if (evaluaContrasena()){
                         abrirUsusariosActivity();
-                        poblarCacheDatosPersonal();
                     }
 
                     //si no se encontro usuario, entonces el usuario con los datos dijitados no existe
@@ -128,19 +126,18 @@ public class AccederActivity extends AppCompatActivity {
         }
     }
 
-    //
-    private void poblarCacheDatosPersonal(){
-        SharedPreferences sp_datosUsuario = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp_datosUsuario.edit();
-        editor.putString("id_personal",arrayIdSedes[0]);
-        editor.putString("cupo",arrayIdSedes[1]);
-        editor.putString("nombre_personal",arrayIdSedes[2]);
-        editor.putString("apellidos",arrayIdSedes[3]);
-        editor.putString("telefono",arrayIdSedes[4]);
-        editor.putString("contrasena",arrayIdSedes[5]);
-        editor.putString("horario",arrayIdSedes[6]);
-        editor.putString("puesto",arrayIdSedes[7]);
-        editor.putString("usuario",arrayIdSedes[8]);
+    private void almacenarDatosPersonal(){
+        Context context = this.getApplicationContext();
+        SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_datosPersonal.edit();
+        editor.putString(getString(R.string.sp_idPersonal_key),arrayIdSedes[0]);
+        editor.putString(getString(R.string.sp_cupoPersonal_key),arrayIdSedes[1]);
+        editor.putString(getString(R.string.sp_nombrePersonal_key),arrayIdSedes[2]);
+        editor.putString(getString(R.string.sp_apellidosPersonal_key),arrayIdSedes[3]);
+        editor.putString(getString(R.string.sp_telefonoPersonal_key),arrayIdSedes[4]);
+        editor.putString(getString(R.string.sp_horarioPersonal_key),arrayIdSedes[6]);
+        editor.putString(getString(R.string.sp_puestoPersonal_key),arrayIdSedes[7]);
+        editor.putString(getString(R.string.sp_usuarioPersonal_key),arrayIdSedes[8]);
         editor.apply();
     }
 
@@ -176,7 +173,6 @@ public class AccederActivity extends AppCompatActivity {
 
                 //obtencion del json atraves de la clase exterior y la url
                 final String json = metodosJson.obtenerJSON(url);
-                mostrarToast(json);
                 //creacion de un runOnUiThread para usar la clase llenaArreglo()
                 runOnUiThread(new Runnable() {
                     @Override

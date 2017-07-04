@@ -28,6 +28,7 @@ public class UsuariosActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         vp_us = (ViewPager) findViewById(R.id.vp_us);
         setupViewPager(vp_us);
 

@@ -1,0 +1,20 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- cabeceras que contienen los encabezados de las configuraciones principales. -->
+
+    <header
+        android:fragment="com.example.adminprospera.rasped_tool.ConfiguracionActivity$GeneralPreferenceFragment"
+        android:icon="@drawable/ic_mi_cuenta"
+        android:title="@string/st_miCuenta" />
+
+    <header
+        android:fragment="com.example.adminprospera.rasped_tool.ConfiguracionActivity$NotificationPreferenceFragment"
+        android:icon="@drawable/ic_notificaciones"
+        android:title="@string/st_notificaciones" />
+
+    <header
+        android:fragment="com.example.adminprospera.rasped_tool.ConfiguracionActivity$DataSyncPreferenceFragment"
+        android:icon="@drawable/ic_informacion"
+        android:title="@string/st_informacion" />
+
+</preference-headers>

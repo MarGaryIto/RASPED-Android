@@ -6,7 +6,6 @@
     <string name="st_contrasena">Contraseña</string>
     <string name="st_telefono">Telefono</string>
     <string name="st_acceder">Acceder</string>
-    <string name="ms_restablecerContrasena">Restablecer mi contraseña</string>
     <string name="st_personal">Personal</string>
     <string name="st_horarios">Horarios</string>
     <string name="st_puestos">Puestos</string>
@@ -27,6 +26,21 @@
     <string name="st_horario">Horarios</string>
     <string name="st_puesto">Puesto</string>
     <string name="st_lada">Lada</string>
-    <string name="ms_usuarioNoEncontrado">usuario no encontrado</string>
+    <string name="ms_usuarioNoEncontrado">RASPED y los logatipos son marcas dedicadas.</string>
     <string name="ms_credencialesIncorrectas">Contraseña o telefono incorrectos</string>
+    <string name="st_nombreHorario">Nombre</string>
+    <string name="st_hrEntrada">Hr entrada</string>
+    <string name="st_hrSalida">Hora de salida</string>
+    <string name="st_inicioComida">Inicio de Comida</string>
+    <string name="st_finComida">Fin de comida</string>
+    <string name="st_tolerancia">Tolerancia</string>
+    <string name="st_aceptar">aceptar</string>
+    <string name="st_cancelar">cancelar</string>
+    <string name="st_miCuenta">Mi cuenta</string>
+    <string name="st_notificaciones">Notificaciones</string>
+    <string name="st_informacion">Información</string>
+    <string name="ms_informacionTitulo">Un administrador asistencial, en la comunidad movil.</string>
+    <string name="pref_default_display_name"></string>
+    <string name="pref_description_social_recommendations">Esta aplicación se creo con software de codigo abierto.</string>
+    <string name="ms_restablecerContrasena">Resstablecer contraseña</string>
 </resources>
