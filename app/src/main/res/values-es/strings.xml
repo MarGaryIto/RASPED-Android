@@ -39,8 +39,9 @@
     <string name="st_miCuenta">Mi cuenta</string>
     <string name="st_notificaciones">Notificaciones</string>
     <string name="st_informacion">Información</string>
-    <string name="ms_informacionTitulo">Un administrador asistencial, en la comunidad movil.</string>
-    <string name="pref_default_display_name"></string>
+    <string name="ms_informacionTitulo">Un administrador asistencial, en la comunidad móvil.</string>
+    <string name="pref_default_display_name">Display nombre</string>
     <string name="pref_description_social_recommendations">Esta aplicación se creo con software de codigo abierto.</string>
     <string name="ms_restablecerContrasena">Resstablecer contraseña</string>
+    <string name="pref_editarDatos">Editar mis datos</string>
 </resources>

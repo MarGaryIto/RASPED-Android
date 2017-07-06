@@ -1,7 +1,5 @@
 package com.example.adminprospera.rasped_tool;
 
-import android.annotation.SuppressLint;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.RequiresApi;
-import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -18,15 +15,15 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +32,11 @@ public class AdministradorActivity extends AppCompatActivity {
     //Generar variables globales para esta clase
     TabLayout tl_ad;
     ViewPager vp_ad;
-    ListView lv_ad_personal;
     FloatingActionButton fab_personal,fab_horarios,fab_puestos;
     Toolbar tb_ad;
+    String[] arraryPersonal;
+    JSONArray jsonArray = null;
+    URL url = null;
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -55,7 +54,6 @@ public class AdministradorActivity extends AppCompatActivity {
         //Traer los componentes de activity_administradora esta clase para programarles
         vp_ad = (ViewPager) findViewById(R.id.vp_ad);
         tl_ad = (TabLayout) findViewById(R.id.tl_ad);
-        lv_ad_personal = (ListView) findViewById(R.id.lv_ad_personal);
         fab_personal = (FloatingActionButton) findViewById(R.id.fab_anadeUsuario);
         fab_horarios = (FloatingActionButton) findViewById(R.id.fab_anadeHorario);
         fab_puestos = (FloatingActionButton) findViewById(R.id.fab_anadePuesto);
@@ -76,36 +74,9 @@ public class AdministradorActivity extends AppCompatActivity {
         //poblar titulo y subtitulo de ActionBar
         poblarActionBar();
 
-        //ArrayAdapter arrayAdapter = new ArrayAdapter(this.getApplicationContext()),
-         //       android.R.layout.simple_list_item_1, cosasPorHacer);
+
 
     }
-
-    private void asignaMenu(){
-        tb_ad.getMenu();
-    }
-
-    /*//metodo para asignarle un toolbar personalizado a PersonalActivity
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.ab_personal, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    //metodo que devuelve algun item seleccionado del toolbar
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.it_configuracion:
-                abrirConfiguracionActivity();
-                return true
-               ;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
-
 
     //declaracion del escuchador para asignarse a un ViewPager
     ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -168,6 +139,78 @@ public class AdministradorActivity extends AppCompatActivity {
         });
     }
 
+    //metodo privado para llenar arreglo arrayIdSedes
+    public void llenarArregloPersonal(){
+        //creacion de un hilo
+        Thread tr = new Thread(){
+            @Override
+            public void run(){
+
+                //casteo de una clase exterior
+                MetodosJson metodosJson = new MetodosJson();
+
+                //llenar la url
+                urlPersonal();
+
+                //obtencion del json atraves de la clase exterior y la url
+                final String json = metodosJson.obtenerJSON(url);
+                //creacion de un runOnUiThread para usar la clase llenaArreglo()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        llenaArregloPersonal(json);
+                    }
+                });
+            }
+        };
+        //ejecucion del hilo
+        tr.run();
+        //almacenarDatosPersonal();
+    }
+
+    //metodo privado para llenar la url que devuelve al personal
+    private void urlPersonal(){
+        try {
+            //la generacion de url requiere estar oncentrada en un try-catch
+            String link = "https://rasped.herokuapp.com/content/personal.php";
+            url = new URL(link);
+
+            //impresion de error en caso de generacion de url erronea
+        }catch (Exception e){
+            mostrarToast("error: "+e.getMessage());
+        }
+    }
+
+    //metodo privado que llena el arreglo arrayIdSedes que llena el lv_ad_personal
+    private void llenaArregloPersonal(String json){
+        try{
+            //preparar el arreglo JSON
+            jsonArray = new JSONArray(json);
+        }catch (JSONException e){
+            mostrarToast("error: "+e.getMessage());
+        }
+        int registros = jsonArray.length();
+        //preparar el arreglo Android
+        arraryPersonal = new String[registros];
+        try{
+
+            for (int i=0;i<registros;i++){
+                //preparar un objeto JSON para la extraccion de datos
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                String sede = jsonObject.getString("sede");
+                String cupo = jsonObject.getString("cupo");
+                String nombre_personal = jsonObject.getString("nombre_personal");
+                String apellido_p = jsonObject.getString("apellido_p");
+
+                //almacenar los datos en el arreglo columna por columna
+                arraryPersonal[i] = sede+cupo+" | "+nombre_personal+" "+apellido_p;
+            }
+        }catch (JSONException e){
+            mostrarToast("error: "+e.getMessage());
+        }
+    }
+
     //metodo privado para abrir personalActivity
     private void abrirPersonalActivity(){
         Intent intent = new Intent(this, PersonalActivity.class);
@@ -227,14 +270,30 @@ public class AdministradorActivity extends AppCompatActivity {
     private void poblarActionBar(){
         Context context = this.getApplicationContext();
         SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
-        String cupo = sp_datosPersonal.getString(getString(R.string.sp_cupoPersonal_key),null);
-        String nombre_personal = sp_datosPersonal.getString(getString(R.string.sp_nombrePersonal_key),null);
-        String apellidos = sp_datosPersonal.getString(getString(R.string.sp_apellidosPersonal_key),null);
-        String telefono = sp_datosPersonal.getString(getString(R.string.sp_telefonoPersonal_key),null);
-        String puesto = sp_datosPersonal.getString(getString(R.string.sp_puestoPersonal_key),null);
+        String cupo = sp_datosPersonal.getString(getString(R.string.sp_cupoPersonal_key),"null");
+        String nombre_personal = sp_datosPersonal.getString(getString(R.string.sp_nombrePersonal_key),"null");
+        String apellidos = sp_datosPersonal.getString(getString(R.string.sp_apellidoPPersonal_key),"null");
+        String telefono = sp_datosPersonal.getString(getString(R.string.sp_telefonoPersonal_key),"null");
+        String puesto = sp_datosPersonal.getString(getString(R.string.sp_puestoPersonal_key),"null");
         tb_ad.setTitle(puesto +" | "+ nombre_personal +" "+ apellidos);
         tb_ad.setSubtitle(cupo +" | "+ telefono);
+
+        //configurar el toolbar con un estilo personalizado en este caso con ab_personal
+        tb_ad.inflateMenu(R.menu.ab_personal);
+        tb_ad.setOnMenuItemClickListener(onMenuItemClickListener);
     }
+
+    Toolbar.OnMenuItemClickListener onMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()){
+                case R.id.it_configuracion:
+                    abrirConfiguracionActivity();
+                    break;
+            }
+            return false;
+        }
+    };
 
     //metodo privado que codifica el contenido del viewPager(pestañas superiores)
     private void setupViewPager(ViewPager viewPager) {

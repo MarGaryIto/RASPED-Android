@@ -1,6 +1,7 @@
 package com.example.adminprospera.rasped_tool;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,7 +11,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.Objects;
+import java.util.logging.Handler;
 
 public class AccederActivity extends AppCompatActivity {
 
@@ -27,11 +28,13 @@ public class AccederActivity extends AppCompatActivity {
     EditText et_ac_telefono, et_ac_contrasena;
     Button bt_ac_acceder;
     TextView tv_ac_restablecerContrasena;
-    ListView lv_ad_personal;
     String st_telefono,st_contraseña;
-    String[] arrayIdSedes = null;
+    String[] arraryPersonal,arrayCredenciales;
     JSONArray jsonArray = null;
     URL url = null;
+    private  ProgressDialog progressBar;
+    private int progressBarStatus = 0;
+    private long fileSize = 0;
 
 
     @Override
@@ -47,7 +50,6 @@ public class AccederActivity extends AppCompatActivity {
         et_ac_contrasena = (EditText) findViewById(R.id.et_ac_contrasena);
         bt_ac_acceder = (Button) findViewById(R.id.bt_ac_acceder);
         tv_ac_restablecerContrasena = (TextView) findViewById(R.id.tv_ac_restaurarContrasena);
-        lv_ad_personal = (ListView) findViewById(R.id.lv_ad_personal);
 
         //asignarle la tarea acceder al hacer click en bt_ac_acceder
         bt_ac_acceder.setOnClickListener(tareaAcceder);
@@ -76,13 +78,13 @@ public class AccederActivity extends AppCompatActivity {
         if((st_telefono.length()>0) && (st_contraseña.length()>0)){
 
             //si los campos tienen datos, llenar el arreglo que contiene los datos de usuario
-            llenarArreglo();
+            llenarArregloCredenciales();
 
             //abrir un try para intentar evaluar el tipo de usuario y contraseña
             try {
 
                 //extraer el tipo de usuario y almacenarlo en una variable
-                String tipo = ""+arrayIdSedes[8];
+                String tipo = ""+arrayCredenciales[11];
 
                 //segun el tipo de usuario, sera el tipo de layout a abrir
                 if (Objects.equals(tipo, "root")){
@@ -93,7 +95,7 @@ public class AccederActivity extends AppCompatActivity {
                     //una vez extraido el tipo de usuario, se evalua la contraseña
                     if(evaluaContrasena()){
                         abrirAdministradorActivity();
-                        almacenarDatosPersonal();
+                        almacenarDatosCredencial();
                     }
 
                     //evaluacion para el usuario registrador
@@ -126,18 +128,22 @@ public class AccederActivity extends AppCompatActivity {
         }
     }
 
-    private void almacenarDatosPersonal(){
+    private void almacenarDatosCredencial(){
         Context context = this.getApplicationContext();
         SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
         @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_datosPersonal.edit();
-        editor.putString(getString(R.string.sp_idPersonal_key),arrayIdSedes[0]);
-        editor.putString(getString(R.string.sp_cupoPersonal_key),arrayIdSedes[1]);
-        editor.putString(getString(R.string.sp_nombrePersonal_key),arrayIdSedes[2]);
-        editor.putString(getString(R.string.sp_apellidosPersonal_key),arrayIdSedes[3]);
-        editor.putString(getString(R.string.sp_telefonoPersonal_key),arrayIdSedes[4]);
-        editor.putString(getString(R.string.sp_horarioPersonal_key),arrayIdSedes[6]);
-        editor.putString(getString(R.string.sp_puestoPersonal_key),arrayIdSedes[7]);
-        editor.putString(getString(R.string.sp_usuarioPersonal_key),arrayIdSedes[8]);
+
+        editor.putString(getString(R.string.sp_idPersonal_key),arrayCredenciales[0]);
+        editor.putString(getString(R.string.sp_sedePersonal_key),arrayCredenciales[1]);
+        editor.putString(getString(R.string.sp_cupoPersonal_key),arrayCredenciales[2]);
+        editor.putString(getString(R.string.sp_nombrePersonal_key),arrayCredenciales[3]);
+        editor.putString(getString(R.string.sp_apellidoPPersonal_key),arrayCredenciales[4]);
+        editor.putString(getString(R.string.sp_apellidoMPersonal_key),arrayCredenciales[5]);
+        editor.putString(getString(R.string.sp_ladaPersonal_key),arrayCredenciales[6]);
+        editor.putString(getString(R.string.sp_telefonoPersonal_key),arrayCredenciales[7]);
+        editor.putString(getString(R.string.sp_horarioPersonal_key),arrayCredenciales[9]);
+        editor.putString(getString(R.string.sp_puestoPersonal_key),arrayCredenciales[10]);
+        editor.putString(getString(R.string.sp_usuarioPersonal_key),arrayCredenciales[11]);
         editor.apply();
     }
 
@@ -149,17 +155,21 @@ public class AccederActivity extends AppCompatActivity {
         st_contraseña = objCifrar.md5(st_contraseña);
 
         //mostrar error en caso de que la contraseña haya sido incorrecta
-        if(!arrayIdSedes[5].equals(st_contraseña)){
+        if(arrayCredenciales[8].equals(st_contraseña)){
+
+            llenarArregloPersonal();
+
+            //devolucion de un true (evaluacion de contraseña correcta)
+            return true;
+        }else{
             mostrarToast(getString(R.string.ms_credencialesIncorrectas));
             return false;
         }
-
-        //devolucion de un true (evaluacion de contraseña correcta)
-        return true;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     //metodo privado para llenar arreglo arrayIdSedes
-    private void llenarArreglo(){
+    private void llenarArregloPersonal(){
         //creacion de un hilo
         Thread tr = new Thread(){
             @Override
@@ -177,7 +187,92 @@ public class AccederActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        llenaArreglo(json);
+                        llenaArregloPersonal(json);
+                    }
+                });
+            }
+        };
+        //ejecucion del hilo
+        tr.run();
+        almacenarDatosPersonal();
+    }
+
+    //metodo privado para llenar la url que devuelve al personal
+    private void urlPersonal(){
+        try {
+            //la generacion de url requiere estar oncentrada en un try-catch
+            String link = "https://rasped.herokuapp.com/content/personal.php";
+            url = new URL(link);
+
+            //impresion de error en caso de generacion de url erronea
+        }catch (Exception e){
+            mostrarToast("error: "+e.getMessage());
+        }
+    }
+
+    //metodo privado que llena el arreglo arrayIdSedes que llena el lv_ad_personal
+    private void llenaArregloPersonal(String json){
+        try{
+            //preparar el arreglo JSON
+            jsonArray = new JSONArray(json);
+        }catch (JSONException e){
+            mostrarToast("error: "+e.getMessage());
+        }
+        int registros = jsonArray.length();
+        //preparar el arreglo Android
+        arraryPersonal = new String[registros];
+        try{
+
+            for (int i=0;i<registros;i++){
+                //preparar un objeto JSON para la extraccion de datos
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                String sede = jsonObject.getString("sede");
+                String cupo = jsonObject.getString("cupo");
+                String nombre_personal = jsonObject.getString("nombre_personal");
+                String apellido_p = jsonObject.getString("apellido_p");
+
+                //almacenar los datos en el arreglo columna por columna
+                arraryPersonal[i] = sede+cupo+" | "+nombre_personal+" "+apellido_p;
+            }
+        }catch (JSONException e){
+            mostrarToast("error: "+e.getMessage());
+        }
+    }
+
+    private void almacenarDatosPersonal(){
+        Context context = this.getApplicationContext();
+        SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_datosPersonal.edit();
+        int personal = arraryPersonal.length;
+        for (int i=0;i<personal;i++){
+            editor.putString(getString(R.string.sp_nombrePersonal_key)+i,arraryPersonal[i]);
+        }
+        editor.putInt(getString(R.string.sp_dimensionArrayPersonal_key),personal);
+        editor.apply();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //metodo privado para llenar arreglo arrayIdSedes
+    private void llenarArregloCredenciales(){
+        //creacion de un hilo
+        Thread tr = new Thread(){
+            @Override
+            public void run(){
+
+                //casteo de una clase exterior
+                MetodosJson metodosJson = new MetodosJson();
+
+                //llenar la url
+                urlCredenciales();
+
+                //obtencion del json atraves de la clase exterior y la url
+                final String json = metodosJson.obtenerJSON(url);
+                //creacion de un runOnUiThread para usar la clase llenaArreglo()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        llenaArregloCredenciales(json);
                     }
                 });
             }
@@ -187,7 +282,7 @@ public class AccederActivity extends AppCompatActivity {
     }
 
     //metodo privado para llenar la url que devuelve al personal
-    private void urlPersonal(){
+    private void urlCredenciales(){
         try {
             //la generacion de url requiere estar oncentrada en un try-catch
             String link = "https://rasped.herokuapp.com/content/personal_tel.php?telefono="+st_telefono;
@@ -200,7 +295,7 @@ public class AccederActivity extends AppCompatActivity {
     }
 
     //metodo privado que llena el arreglo arrayIdSedes que llena el lv_ad_personal
-    private void llenaArreglo(String json){
+    private void llenaArregloCredenciales(String json){
         try{
             //preparar el arreglo JSON
             jsonArray = new JSONArray(json);
@@ -208,27 +303,31 @@ public class AccederActivity extends AppCompatActivity {
             mostrarToast("error: "+e.getMessage());
         }
         //preparar el arreglo Android
-        arrayIdSedes = new String[9];
+        arrayCredenciales = new String[12];
         try{
 
             //preparar un objeto JSON para la extraccion de datos
             JSONObject jsonObject = jsonArray.getJSONObject(0);
 
             //almacenar los datos en el arreglo columna por columna
-            arrayIdSedes[0] = jsonObject.getString("id_personal");
-            arrayIdSedes[1] = jsonObject.getString("cupo");
-            arrayIdSedes[2] = jsonObject.getString("nombre_personal");
-            arrayIdSedes[3] = jsonObject.getString("apellidos");
-            arrayIdSedes[4] = jsonObject.getString("telefono");
-            arrayIdSedes[5] = jsonObject.getString("contrasena");
-            arrayIdSedes[6] = jsonObject.getString("horario");
-            arrayIdSedes[7] = jsonObject.getString("puesto");
-            arrayIdSedes[8] = jsonObject.getString("usuario");
+            arrayCredenciales[0] = jsonObject.getString("id_personal");
+            arrayCredenciales[1] = jsonObject.getString("sede");
+            arrayCredenciales[2] = jsonObject.getString("cupo");
+            arrayCredenciales[3] = jsonObject.getString("nombre_personal");
+            arrayCredenciales[4] = jsonObject.getString("apellido_p");
+            arrayCredenciales[5] = jsonObject.getString("apellido_m");
+            arrayCredenciales[6] = jsonObject.getString("lada");
+            arrayCredenciales[7] = jsonObject.getString("telefono");
+            arrayCredenciales[8] = jsonObject.getString("contrasena");
+            arrayCredenciales[9] = jsonObject.getString("horario");
+            arrayCredenciales[10] = jsonObject.getString("puesto");
+            arrayCredenciales[11] = jsonObject.getString("usuario");
 
         }catch (JSONException e){
             mostrarToast("error: "+e.getMessage());
         }
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     //metodo privado que mostrara un toast, de mensaje contendra variables
     private void mostrarToast(String mensaje){
@@ -278,12 +377,8 @@ public class AccederActivity extends AppCompatActivity {
             return "";
         }
 
-        public String md5(String texto) {
+        private String md5(String texto) {
             return getCifrado(texto, "MD5");
-        }
-
-        public String sha1(String texto) {
-            return getCifrado(texto, "SHA1");
         }
     }
 }

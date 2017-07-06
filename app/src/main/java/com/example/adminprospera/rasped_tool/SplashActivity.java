@@ -26,7 +26,10 @@ public class SplashActivity extends AppCompatActivity {
     Animation dezp_derecha,dezp_izquierda;
     TextView tv_sp_appName;
     private static final String PREFS_NAME = "datosUsuario";
-    String[] datosPersonal=null;
+    private String[] datosPersonal;
+    String[] arrayPersonal;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,16 +53,19 @@ public class SplashActivity extends AppCompatActivity {
         dezp_izquierda.reset();
         tv_sp_appName.startAnimation(dezp_izquierda);
 
+        arrayPersonal = new String[]{"dos", "tres"};
+
         //extrae datos temporales
         evaluaCache();
-
     }
+
+
 
     //metodo privado para evaluar desde datos temporales, si ya se inicio sesion
     private void evaluaCache(){
         Context context = this.getApplicationContext();
         SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
-        String usuario = sp_datosPersonal.getString(getString(R.string.sp_usuarioPersonal_key),null);
+        String usuario = sp_datosPersonal.getString(getString(R.string.sp_usuarioPersonal_key),"null");
         mostrarToast("usuario");
         switch (usuario){
             case "root":
@@ -165,5 +171,13 @@ public class SplashActivity extends AppCompatActivity {
         Timer timer = new Timer();
         timer.schedule(task, SPLASH_SCREEN_DELAY);
 
+    }
+
+    public String[] getArrayPersonal() {
+        return arrayPersonal;
+    }
+
+    public void setArrayPersonal(String[] arrayPersonal) {
+        this.arrayPersonal = arrayPersonal;
     }
 }

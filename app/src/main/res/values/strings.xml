@@ -36,14 +36,13 @@
     <string name="st_finComida">End of food</string>
     <string name="st_tolerancia">Tolerance</string>
     <string name="st_aceptar">accept</string>
-    <string name="st_cancelar">cancel</string>
-    <string name="sp_datosPersonal_key" translatable="false">sp_datos_del_personal</string>
+    <string name="st_cancelar">Cancel</string>
+    <string name="sp_datosPersonal_key" translatable="false">sp_datos_del_personal_key</string>
     <string name="sp_nombrePersonal_key" translatable="false">sp_nombrePersonal_key</string>
     <string name="sp_idPersonal_key" translatable="false">sp_idPersonal_key</string>
     <string name="sp_cupoPersonal_key" translatable="false">sp_cupoPersonal_key</string>
-    <string name="sp_apellidosPersonal_key" translatable="false">sp_apellidosPersonal_key</string>
     <string name="sp_telefonoPersonal_key" translatable="false">sp_telefonoPersonal_key</string>
-    <string name="sp_horarioPersonal_key" translatable="false">sp_horarioPersonal</string>
+    <string name="sp_horarioPersonal_key" translatable="false">sp_horarioPersonal_key</string>
     <string name="sp_puestoPersonal_key" translatable="false">sp_puestoPersonal_key</string>
     <string name="sp_usuarioPersonal_key" translatable="false">sp_usuarioPersonal_key</string>
     <string name="title_activity_configuracion">Settings</string>
@@ -122,4 +121,10 @@
     <string name="ms_informacionTitulo">A care manager, in the mobile community.  RASPED and logatipos are dedicated brands.  This application was created with open source software.</string>
     <string name="ms_restablecerContrasena">Restore password</string>
     <string name="pref_default_display_name">name</string>
+    <string name="sp_apellidoMPersonal_key" translatable="false">sp_apellidoMPersonal_key</string>
+    <string name="sp_apellidoPPersonal_key" translatable="false">sp_apellidoPPersonal_key</string>
+    <string name="sp_sedePersonal_key" translatable="false">sp_sedePersonal_key</string>
+    <string name="sp_ladaPersonal_key" translatable="false">sp_ladaPersonal_key</string>
+    <string name="pref_editarDatos">Edit my dates</string>
+    <string name="sp_dimensionArrayPersonal_key" translatable="false">sp_dimensionArrayPersonal_key</string>
 </resources>
