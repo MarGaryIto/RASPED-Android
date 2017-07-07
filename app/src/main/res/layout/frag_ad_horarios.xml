@@ -10,7 +10,8 @@
     <ListView
         android:id="@+id/lv_ad_horarios"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
 
     </ListView>
 

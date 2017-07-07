@@ -139,78 +139,6 @@ public class AdministradorActivity extends AppCompatActivity {
         });
     }
 
-    //metodo privado para llenar arreglo arrayIdSedes
-    public void llenarArregloPersonal(){
-        //creacion de un hilo
-        Thread tr = new Thread(){
-            @Override
-            public void run(){
-
-                //casteo de una clase exterior
-                MetodosJson metodosJson = new MetodosJson();
-
-                //llenar la url
-                urlPersonal();
-
-                //obtencion del json atraves de la clase exterior y la url
-                final String json = metodosJson.obtenerJSON(url);
-                //creacion de un runOnUiThread para usar la clase llenaArreglo()
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        llenaArregloPersonal(json);
-                    }
-                });
-            }
-        };
-        //ejecucion del hilo
-        tr.run();
-        //almacenarDatosPersonal();
-    }
-
-    //metodo privado para llenar la url que devuelve al personal
-    private void urlPersonal(){
-        try {
-            //la generacion de url requiere estar oncentrada en un try-catch
-            String link = "https://rasped.herokuapp.com/content/personal.php";
-            url = new URL(link);
-
-            //impresion de error en caso de generacion de url erronea
-        }catch (Exception e){
-            mostrarToast("error: "+e.getMessage());
-        }
-    }
-
-    //metodo privado que llena el arreglo arrayIdSedes que llena el lv_ad_personal
-    private void llenaArregloPersonal(String json){
-        try{
-            //preparar el arreglo JSON
-            jsonArray = new JSONArray(json);
-        }catch (JSONException e){
-            mostrarToast("error: "+e.getMessage());
-        }
-        int registros = jsonArray.length();
-        //preparar el arreglo Android
-        arraryPersonal = new String[registros];
-        try{
-
-            for (int i=0;i<registros;i++){
-                //preparar un objeto JSON para la extraccion de datos
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-                String sede = jsonObject.getString("sede");
-                String cupo = jsonObject.getString("cupo");
-                String nombre_personal = jsonObject.getString("nombre_personal");
-                String apellido_p = jsonObject.getString("apellido_p");
-
-                //almacenar los datos en el arreglo columna por columna
-                arraryPersonal[i] = sede+cupo+" | "+nombre_personal+" "+apellido_p;
-            }
-        }catch (JSONException e){
-            mostrarToast("error: "+e.getMessage());
-        }
-    }
-
     //metodo privado para abrir personalActivity
     private void abrirPersonalActivity(){
         Intent intent = new Intent(this, PersonalActivity.class);
@@ -283,6 +211,7 @@ public class AdministradorActivity extends AppCompatActivity {
         tb_ad.setOnMenuItemClickListener(onMenuItemClickListener);
     }
 
+    //escuchador para el toolbar, asignando una accion al activar un item
     Toolbar.OnMenuItemClickListener onMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {

@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,12 +30,12 @@ public class AccederActivity extends AppCompatActivity {
     Button bt_ac_acceder;
     TextView tv_ac_restablecerContrasena;
     String st_telefono,st_contraseña;
-    String[] arraryPersonal,arrayCredenciales;
-    JSONArray jsonArray = null;
+    String[] arraryPersonal,arrayCredenciales,arrayPuestos,arrayHorarios;
+    JSONArray jsonArray,jsonArrayHorarios,jsonArrayPuestos = null;
     URL url = null;
-    private  ProgressDialog progressBar;
-    private int progressBarStatus = 0;
-    private long fileSize = 0;
+    private ProgressDialog progressDialog;
+    String linkPuestos = "https://rasped.herokuapp.com/content/puestos.php";
+    String linkHorarios = "https://rasped.herokuapp.com/content/horarios.php";
 
 
     @Override
@@ -54,12 +55,16 @@ public class AccederActivity extends AppCompatActivity {
         //asignarle la tarea acceder al hacer click en bt_ac_acceder
         bt_ac_acceder.setOnClickListener(tareaAcceder);
 
+        progressDialog= new ProgressDialog(this);
+
     }
 
     //crear tareaAcceder que se activirara al hacer click en un componente establecido
     View.OnClickListener tareaAcceder = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            progressDialog.setMessage("Iniciado sesión");
+            progressDialog.show();
             datosACadena();
             evaluaCredenciales();
         }
@@ -80,6 +85,7 @@ public class AccederActivity extends AppCompatActivity {
             //si los campos tienen datos, llenar el arreglo que contiene los datos de usuario
             llenarArregloCredenciales();
 
+            progressDialog.dismiss();
             //abrir un try para intentar evaluar el tipo de usuario y contraseña
             try {
 
@@ -96,6 +102,8 @@ public class AccederActivity extends AppCompatActivity {
                     if(evaluaContrasena()){
                         abrirAdministradorActivity();
                         almacenarDatosCredencial();
+                        llenarArregloPuestos();
+                        llenarArregloHorarios();
                     }
 
                     //evaluacion para el usuario registrador
@@ -329,6 +337,142 @@ public class AccederActivity extends AppCompatActivity {
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    //metodo privado para llenar arreglo arrayIdSedes
+    private void llenarArregloPuestos(){
+        //creacion de un hilo
+        Thread tr = new Thread(){
+            @Override
+            public void run(){
+
+                //invocacion de una clase exterior
+                MetodosJson metodosJson = new MetodosJson();
+
+                //generar una url con el link de puestos
+                URL urlPuestos = metodosJson.crearURL(linkPuestos);
+
+                //obtencion del json atraves de la clase exterior y la url
+                final String jsonPuestos = metodosJson.obtenerJSON(urlPuestos);
+
+
+                //creacion de un runOnUiThread para usar la clase llenaArreglo()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            //preparar el arreglo JSON
+                            jsonArrayPuestos = new JSONArray(jsonPuestos);
+                            int registros = jsonArrayPuestos.length();
+
+                            //preparar el arreglo Android
+                            arrayPuestos = new String[registros];
+
+                            //ciclo para el concentrado de registros
+                            for (int i = 0; i < registros; i++) {
+                                //preparar un objeto JSON para la extraccion de datos
+                                JSONObject jsonObject = jsonArrayPuestos.getJSONObject(i);
+
+                                String nombre_puesto = jsonObject.getString("nombre_puesto");
+
+                                //almacenar los datos en el arreglo columna por columna
+                                arrayPuestos[i] = nombre_puesto;
+                            }//for
+
+                        }catch(JSONException e){
+                                mostrarToast("error: " + e.getMessage());
+                        }//try-catch
+                    }//run
+                });//runOnUiThread
+            }//run
+        };//Thread tr
+        //ejecucion del hilo
+        tr.run();
+        almacenarDatosPuestos();
+    }//llenarArregloPuestos
+
+
+
+    private void almacenarDatosPuestos(){
+        Context context = this.getApplicationContext();
+        SharedPreferences sp_datosPuestos =
+                context.getSharedPreferences(getString(R.string.sp_datosPuestos_key),
+                        Context.MODE_PRIVATE);
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_datosPuestos.edit();
+        int puestos = arrayPuestos.length;
+        for (int i=0;i<puestos;i++){
+            editor.putString(getString(R.string.sp_nombrePuesto_key)+i,arrayPuestos[i]);
+        }
+        editor.putInt(getString(R.string.sp_dimensionPuestos_key),puestos);
+        editor.apply();
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //metodo privado para llenar arreglo arrayIdSedes
+    private void llenarArregloHorarios(){
+        //creacion de un hilo
+        Thread tr = new Thread(){
+            @Override
+            public void run(){
+
+                //invocacion de una clase exterior
+                MetodosJson metodosJson = new MetodosJson();
+
+                //generar una url con el link de puestos
+                URL urlHorarios = metodosJson.crearURL(linkHorarios);
+
+                //obtencion del json atraves de la clase exterior y la url
+                final String jsonHorarios = metodosJson.obtenerJSON(urlHorarios);
+
+
+                //creacion de un runOnUiThread para usar la clase llenaArreglo()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            //preparar el arreglo JSON
+                            jsonArrayHorarios = new JSONArray(jsonHorarios);
+                            int registros = jsonArrayHorarios.length();
+
+                            //preparar el arreglo Android
+                            arrayHorarios = new String[registros];
+
+                            //ciclo para el concentrado de registros
+                            for (int i = 0; i < registros; i++) {
+                                //preparar un objeto JSON para la extraccion de datos
+                                JSONObject jsonObject = jsonArrayHorarios.getJSONObject(i);
+
+                                String hr_nombre = jsonObject.getString("hr_nombre");
+
+                                //almacenar los datos en el arreglo columna por columna
+                                arrayHorarios[i] = hr_nombre;
+                            }//for
+
+                        }catch(JSONException e){
+                            mostrarToast("error: " + e.getMessage());
+                        }//try-catch
+                    }//run
+                });//runOnUiThread
+            }//run
+        };//Thread tr
+        //ejecucion del hilo
+        tr.run();
+        almacenarDatosHorarios();
+    }//llenarArregloHorarios
+
+
+
+    private void almacenarDatosHorarios(){
+        Context context = this.getApplicationContext();
+        SharedPreferences sp_datosHorarios =
+                context.getSharedPreferences(getString(R.string.sp_datosHorarios_key),
+                        Context.MODE_PRIVATE);
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_datosHorarios.edit();
+        int horarios = arrayHorarios.length;
+        for (int i=0;i<horarios;i++){
+            editor.putString(getString(R.string.sp_hrNombre_key)+i,arrayHorarios[i]);
+        }
+        editor.putInt(getString(R.string.sp_dimensionHorarios_key),horarios);
+        editor.apply();
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     //metodo privado que mostrara un toast, de mensaje contendra variables
     private void mostrarToast(String mensaje){
         Context context = getApplicationContext();

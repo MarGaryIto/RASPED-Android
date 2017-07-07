@@ -1,5 +1,7 @@
 package com.example.adminprospera.rasped_tool;
 
+import android.util.Log;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -47,4 +49,17 @@ class MetodosJson {
         //devolucion del resultado
         return resul.toString();
     }
+
+    URL crearURL(String link){
+        URL url = null;
+        try {
+            //la generacion de url requiere estar oncentrada en un try-catch
+            url = new URL(link);
+        }catch (Exception e){
+            Log.e("Error al crear url","no se pudo generar url");
+        }finally {
+            return url;
+        }
+    }
+
 }
