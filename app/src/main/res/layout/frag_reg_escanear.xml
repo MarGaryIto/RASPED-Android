@@ -9,11 +9,6 @@
         android:layout_height="wrap_content"
         android:text="@string/st_escanear"/>
 
-    <ListView
-        android:id="@+id/lv_reg_escanear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
-    </ListView>
 
 </RelativeLayout>
