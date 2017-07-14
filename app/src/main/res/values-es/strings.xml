@@ -44,4 +44,9 @@
     <string name="pref_description_social_recommendations">Esta aplicación se creo con software de codigo abierto.</string>
     <string name="ms_restablecerContrasena">Resstablecer contraseña</string>
     <string name="pref_editarDatos">Editar mis datos</string>
+    <string name="st_cupo">Cupo</string>
+    <string name="title_activity_configuracion">Configuración</string>
+    <string name="st_sede">Sede</string>
+    <string name="st_actualizar">Actualizar</string>
+    <string name="st_cerrarSesion">Cerrar Sesion</string>
 </resources>

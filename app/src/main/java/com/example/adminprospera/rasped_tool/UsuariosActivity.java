@@ -27,8 +27,6 @@ public class UsuariosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuarios);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         tb_us = (Toolbar) findViewById(R.id.tb_ad);
         ViewPager vp_us = (ViewPager) findViewById(R.id.vp_us);

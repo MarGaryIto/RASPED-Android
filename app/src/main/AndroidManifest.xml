@@ -23,6 +23,15 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
+                <data android:scheme="https"
+                    android:host="rasped.herokuapp.com"
+                    android:pathPrefix="/content" />
+                <!-- note that the leading "/" is required for pathPrefix-->
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <data android:scheme="example"
+                    android:host="heroku" />
             </intent-filter>
         </activity>
         <activity android:name=".AccederActivity" />
@@ -45,7 +54,8 @@
         <activity
             android:name=".ConfiguracionActivity"
             android:label="@string/title_activity_configuracion" />
-        <activity android:name=".InformacionActivity"/>
+        <activity android:name=".InformacionActivity" />
+        <activity android:name=".EscanerActivity"/>
     </application>
 
 </manifest>

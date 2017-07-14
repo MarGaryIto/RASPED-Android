@@ -45,8 +45,6 @@ public class AdministradorActivity extends AppCompatActivity {
         //crear el entonrno inicial
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_administrador);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         //establecer y mantener conexion externa
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitNetwork().build());
@@ -73,8 +71,6 @@ public class AdministradorActivity extends AppCompatActivity {
 
         //poblar titulo y subtitulo de ActionBar
         poblarActionBar();
-
-
 
     }
 
@@ -137,6 +133,13 @@ public class AdministradorActivity extends AppCompatActivity {
                 sbrirPuestosActivity();
             }
         });
+    }
+
+    //metodo privado para abrir personalActivity
+    private void abrirAccederActivity(){
+        Intent intent = new Intent(this, AccederActivity.class);
+        startActivityForResult(intent,0);
+        finish();
     }
 
     //metodo privado para abrir personalActivity
@@ -219,10 +222,41 @@ public class AdministradorActivity extends AppCompatActivity {
                 case R.id.it_configuracion:
                     abrirConfiguracionActivity();
                     break;
+                case R.id.it_actualizar:
+                    actualizarTablas();
+                    break;
+                case R.id.it_cerrarSesion:
+                    cerrarSesion();
+                    break;
             }
             return false;
         }
     };
+
+    private void actualizarTablas(){
+        //code
+    }
+
+    //metodo privado para cerrar sesion
+    private void cerrarSesion(){
+        //obtencon de context
+        Context context = this.getApplicationContext();
+
+        //extraer archivos temporales
+        SharedPreferences sp_datosPersonal =
+                context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),
+                        Context.MODE_PRIVATE);
+        SharedPreferences sp_datosPuestos =
+                context.getSharedPreferences(getString(R.string.sp_datosPuestos_key),
+                        Context.MODE_PRIVATE);
+
+        //limpiar los archivos temporales
+        sp_datosPersonal.edit().clear().apply();
+        sp_datosPuestos.edit().clear().apply();
+
+        //cerrar este activity y abrir AccederActivity
+        abrirAccederActivity();
+    }
 
     //metodo privado que codifica el contenido del viewPager(pestañas superiores)
     private void setupViewPager(ViewPager viewPager) {

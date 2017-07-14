@@ -10,4 +10,14 @@
         android:orderInCategory="100"
         app:showAsAction="never" />
 
+    <item android:id="@+id/it_actualizar"
+        android:title="@string/st_actualizar"
+        android:orderInCategory="200"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/it_cerrarSesion"
+        android:title="@string/st_cerrarSesion"
+        android:orderInCategory="300"
+        app:showAsAction="never" />
+
 </menu>

@@ -78,12 +78,50 @@
             android:id="@+id/et_pe_lada"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="3"
+            android:ems="3"
             android:hint="@string/st_lada"/>
         <EditText
             android:id="@+id/et_pe_telefono"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="8"
+            android:ems="8"
             android:hint="@string/st_telefono"/>
+    </LinearLayout>
+
+    <!--Cupo ImageView y EditText-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/st_telefono"
+            android:src="@drawable/ic_identificacion" />
+
+        <EditText
+            android:id="@+id/et_pe_sede"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="2"
+            android:hint="@string/st_sede"
+            android:inputType="number"
+            android:maxLength="2" />
+
+        <EditText
+            android:id="@+id/et_pe_cupo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="4"
+            android:hint="@string/st_cupo"
+            android:inputType="number"
+            android:maxLength="4" />
     </LinearLayout>
 
     <!--Horarios ImageView y EditText-->

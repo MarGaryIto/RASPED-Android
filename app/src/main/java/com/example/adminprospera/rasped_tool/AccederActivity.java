@@ -110,6 +110,7 @@ public class AccederActivity extends AppCompatActivity {
                 }else if (Objects.equals(tipo, "regis")) {
                     //una vez extraido el tipo de usuario, se evalua la contraseña
                     if (evaluaContrasena()){
+                        almacenarDatosCredencial();
                         abrirRegistradorActivity();
                     }
 
@@ -117,6 +118,7 @@ public class AccederActivity extends AppCompatActivity {
                 }else if (Objects.equals(tipo, "user")) {
                     //una vez extraido el tipo de usuario, se evalua la contraseña
                     if (evaluaContrasena()){
+                        almacenarDatosCredencial();
                         abrirUsusariosActivity();
                     }
 
