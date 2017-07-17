@@ -26,7 +26,7 @@
     <string name="st_horario">Horarios</string>
     <string name="st_puesto">Puesto</string>
     <string name="st_lada">Lada</string>
-    <string name="ms_usuarioNoEncontrado">RASPED y los logatipos son marcas dedicadas.</string>
+    <string name="ms_usuarioNoEncontrado">Usuario no encontrado, intente de nuevo.</string>
     <string name="ms_credencialesIncorrectas">Contraseña o telefono incorrectos</string>
     <string name="st_nombreHorario">Nombre</string>
     <string name="st_hrEntrada">Hr entrada</string>

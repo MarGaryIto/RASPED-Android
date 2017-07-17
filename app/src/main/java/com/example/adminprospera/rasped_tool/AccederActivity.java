@@ -1,13 +1,18 @@
 package com.example.adminprospera.rasped_tool;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +26,6 @@ import org.json.JSONObject;
 
 import java.net.URL;
 import java.util.Objects;
-import java.util.logging.Handler;
 
 public class AccederActivity extends AppCompatActivity {
 
@@ -33,9 +37,10 @@ public class AccederActivity extends AppCompatActivity {
     String[] arraryPersonal,arrayCredenciales,arrayPuestos,arrayHorarios;
     JSONArray jsonArray,jsonArrayHorarios,jsonArrayPuestos = null;
     URL url = null;
-    private ProgressDialog progressDialog;
     String linkPuestos = "https://rasped.herokuapp.com/content/puestos.php";
     String linkHorarios = "https://rasped.herokuapp.com/content/horarios.php";
+    CuadrosDialogo cuadrosDialogo;
+    ProgressDialog progressDoalog;
 
 
     @Override
@@ -55,7 +60,9 @@ public class AccederActivity extends AppCompatActivity {
         //asignarle la tarea acceder al hacer click en bt_ac_acceder
         bt_ac_acceder.setOnClickListener(tareaAcceder);
 
-        progressDialog= new ProgressDialog(this);
+        tv_ac_restablecerContrasena.setOnClickListener(tareaAcceder);
+
+        cuadrosDialogo = new CuadrosDialogo();
 
     }
 
@@ -63,12 +70,59 @@ public class AccederActivity extends AppCompatActivity {
     View.OnClickListener tareaAcceder = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            progressDialog.setMessage("Iniciado sesión");
-            progressDialog.show();
-            datosACadena();
-            evaluaCredenciales();
+            int id = v.getId();
+            AccederActivity.super.onRestart();
+            if (id==bt_ac_acceder.getId()){
+                datosACadena();
+                evaluaCredenciales();
+
+            }else if(id==tv_ac_restablecerContrasena.getId()){
+                DialogoConfirmacion dialogoConfirmacion = new DialogoConfirmacion();
+            }
+
         }
     };
+
+    @SuppressLint("ValidFragment")
+    public class DialogoConfirmacion extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+            AlertDialog.Builder builder =
+                    new AlertDialog.Builder(getActivity());
+
+            builder.setMessage("¿Confirma la acción seleccionada?")
+                    .setTitle("Confirmacion")
+                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener()  {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Log.i("Dialogos", "Confirmacion Aceptada.");
+                            dialog.cancel();
+                        }
+                    })
+                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Log.i("Dialogos", "Confirmacion Cancelada.");
+                            dialog.cancel();
+                        }
+                    });
+
+            return builder.create();
+        }
+    }
+
+    private void EnviarMensaje (String Numero, String Mensaje){
+        try {
+            SmsManager sms = SmsManager.getDefault();
+            sms.sendTextMessage(Numero,null,Mensaje,null,null);
+            Toast.makeText(getApplicationContext(), "Mensaje Enviado.", Toast.LENGTH_LONG).show();
+        }
+
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Mensaje no enviado, datos incorrectos.", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+
+    }
 
     //metodo privado que almacena el contenido de los editText a cadenas de texto tipo String
     private void datosACadena(){
@@ -85,7 +139,6 @@ public class AccederActivity extends AppCompatActivity {
             //si los campos tienen datos, llenar el arreglo que contiene los datos de usuario
             llenarArregloCredenciales();
 
-            progressDialog.dismiss();
             //abrir un try para intentar evaluar el tipo de usuario y contraseña
             try {
 
@@ -135,6 +188,7 @@ public class AccederActivity extends AppCompatActivity {
             //si los campos de texto estan vacios, mostrar mensaje
         }else{
             mostrarToast(getString(R.string.ms_camposVacios));
+            //progressDoalog.dismiss();
         }
     }
 
@@ -334,7 +388,7 @@ public class AccederActivity extends AppCompatActivity {
             arrayCredenciales[11] = jsonObject.getString("usuario");
 
         }catch (JSONException e){
-            mostrarToast("error: "+e.getMessage());
+            //mostrarToast("error: "+e.getMessage());
         }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////

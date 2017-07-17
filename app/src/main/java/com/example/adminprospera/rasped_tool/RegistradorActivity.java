@@ -13,7 +13,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.util.Linkify;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +26,9 @@ import java.util.List;
 public class RegistradorActivity extends AppCompatActivity {
 
     Toolbar tb_reg;
+    TextView tv_reg_tBDescrip;
+    Button bt_reg_scanear;
+
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -34,24 +42,60 @@ public class RegistradorActivity extends AppCompatActivity {
         TabLayout tl_reg = (TabLayout) findViewById(R.id.tl_reg);
         tl_reg.setupWithViewPager(vp_reg);
         tb_reg = (Toolbar) findViewById(R.id.tb_reg);
+        tv_reg_tBDescrip = (TextView) findViewById(R.id.tv_reg_tBDescrip);
+        bt_reg_scanear = (Button) findViewById(R.id.bt_reg_scanear);
 
         //poblar titulo y subtitulo de ActionBar
         poblarActionBar();
 
+        bt_reg_scanear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new IntentIntegrator(RegistradorActivity.this).initiateScan();
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        final IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        handleResult(scanResult);
+    }
+
+    private void handleResult(IntentResult scanResult) {
+        if (scanResult != null) {
+            updateUITextViews(scanResult.getContents(), scanResult.getFormatName());
+        } else {
+            Toast.makeText(this, "No se ha leído nada :(", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateUITextViews(String scan_result, String scan_result_format) {
+        mostrarToast("resultado"+scan_result);
+    }
+
+    private void mostrarToast(String mensaje){
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, mensaje, duration);
+        toast.show();
     }
 
     //metodo privado para asignarle titulo y subtitulo al toolbar con los datos de usuario
     private void poblarActionBar(){
         Context context = this.getApplicationContext();
         SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
+        String nombre_user = sp_datosPersonal.getString(getString(R.string.sp_nombrePersonal_key),"null");
         String cupo = sp_datosPersonal.getString(getString(R.string.sp_cupoPersonal_key),"null");
-        String nombre_personal = sp_datosPersonal.getString(getString(R.string.sp_nombrePersonal_key),"null");
+        String sede = sp_datosPersonal.getString(getString(R.string.sp_sedePersonal_key),"null");
         String apellidos = sp_datosPersonal.getString(getString(R.string.sp_apellidoPPersonal_key),"null");
+        String lada = sp_datosPersonal.getString(getString(R.string.sp_ladaPersonal_key),"null");
         String telefono = sp_datosPersonal.getString(getString(R.string.sp_telefonoPersonal_key),"null");
         String puesto = sp_datosPersonal.getString(getString(R.string.sp_puestoPersonal_key),"null");
-        tb_reg.setTitle(puesto +" | "+ nombre_personal +" "+ apellidos);
-        tb_reg.setSubtitle(cupo +" | "+ telefono);
-
+        tb_reg.setTitle(nombre_user+" "+apellidos);
+        tb_reg.setSubtitle(sede+cupo +" | "+ lada+telefono);
+        tv_reg_tBDescrip.setText(puesto);
         //configurar el toolbar con un estilo personalizado en este caso con ab_personal
         tb_reg.inflateMenu(R.menu.ab_personal);
         tb_reg.setOnMenuItemClickListener(onMenuItemClickListener);

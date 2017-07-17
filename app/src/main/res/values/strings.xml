@@ -27,7 +27,7 @@
     <string name="st_horario">shifts</string>
     <string name="st_puesto">Rol</string>
     <string name="st_lada">Lada</string>
-    <string name="ms_usuarioNoEncontrado">RASPED and logatipos are dedicated brands.</string>
+    <string name="ms_usuarioNoEncontrado">User no found, try again.</string>
     <string name="ms_credencialesIncorrectas">Incorrect password or phone number</string>
     <string name="st_nombreHorario">Schedules name</string>
     <string name="st_hrEntrada">Check in time</string>
