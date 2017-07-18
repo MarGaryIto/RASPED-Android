@@ -27,14 +27,14 @@ final class IntentResult {
     /**
      * @return raw content of barcode
      */
-    private String getContents() {
+    public String getContents() {
         return contents;
     }
 
     /**
      * @return name of format, like "QR_CODE", "UPC_A". See {@code BarcodeFormat} for more format names.
      */
-    private String getFormatName() {
+    public String getFormatName() {
         return formatName;
     }
 

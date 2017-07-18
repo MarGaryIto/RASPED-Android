@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.util.Linkify;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
