@@ -70,6 +70,41 @@ public class HttpHandler {
             params.add(new BasicNameValuePair("telefono",telefono));
             params.add(new BasicNameValuePair("sede",sede));
             params.add(new BasicNameValuePair("cupo",cupo));
+            params.add(new BasicNameValuePair("tipo_usuario","4"));
+
+		    /*Una vez añadidos los parametros actualizamos la entidad de httppost, esto quiere decir
+		    en pocas palabras anexamos los parametros al objeto para que al enviarse al servidor
+		    envien los datos que hemos añadido*/
+            httppost.setEntity(new UrlEncodedFormEntity(params));
+
+            /*Finalmente ejecutamos enviando la info al server*/
+            HttpResponse resp = httpclient.execute(httppost);
+            HttpEntity ent = resp.getEntity();/*y obtenemos una respuesta*/
+
+            String text = EntityUtils.toString(ent);
+
+            return text;
+
+        }
+        catch(Exception e) { return e.toString();}
+
+    }
+
+    public String postContrasena(String telefono, String mensContrasena){
+
+        try {
+
+            String posturl = "http://dexub.com/smsmexico/index.php";
+            HttpClient httpclient = new DefaultHttpClient();
+            /*Creamos el objeto de HttpClient que nos permitira conectarnos mediante peticiones http*/
+            HttpPost httppost = new HttpPost(posturl);
+            /*El objeto HttpPost permite que enviemos una peticion de tipo POST a una URL especificada*/
+            //AÑADIR PARAMETROS
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("country",""));
+            params.add(new BasicNameValuePair("tel",telefono));
+            params.add(new BasicNameValuePair("msg",mensContrasena));
+            params.add(new BasicNameValuePair("enviar",""));
 
 		    /*Una vez añadidos los parametros actualizamos la entidad de httppost, esto quiere decir
 		    en pocas palabras anexamos los parametros al objeto para que al enviarse al servidor

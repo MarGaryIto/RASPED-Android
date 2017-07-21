@@ -120,4 +120,5 @@
     <string name="ms_errorDatos">Failed to capture data</string>
     <string name="st_adicionExitosa">Successful addition</string>
     <string name="ms_contrasenaEnviada">The password will be sent to the registered number</string>
+    <string name="ms_tuContrasena">Your new password in RASPED is</string>
 </resources>

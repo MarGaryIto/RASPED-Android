@@ -22,6 +22,9 @@
             android:id="@+id/et_pe_nombre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLength="20"
+            android:ems="20"
+            android:inputType="textPersonName"
             android:hint="@string/st_nombre"/>
     </LinearLayout>
 
@@ -41,6 +44,8 @@
             android:id="@+id/et_pe_apPaterno"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLength="15"
+            android:ems="15"
             android:hint="@string/st_apPaterno"/>
     </LinearLayout>
 
@@ -60,6 +65,8 @@
             android:id="@+id/et_pe_apMaterno"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLength="15"
+            android:ems="15"
             android:hint="@string/st_apPMaterno"/>
     </LinearLayout>
 

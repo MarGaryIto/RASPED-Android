@@ -59,4 +59,5 @@
     <string name="ms_errorDatos">Error al capturar datos</string>
     <string name="st_adicionExitosa">Adición exitosa</string>
     <string name="ms_contrasenaEnviada">La contraseña será enviada al número registrado</string>
+    <string name="ms_tuContrasena">"Tu nueva contrasenia para RASPED es "</string>
 </resources>

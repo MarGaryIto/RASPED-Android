@@ -10,12 +10,18 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class PersonalActivity extends AppCompatActivity {
 
     //Declaracion de variables utilizables en toda la clase PersonalActivity
     EditText et_pe_nombre,et_pe_apPaterno,et_pe_apMaterno,et_pe_lada,et_pe_telefono,et_pe_sede,et_pe_cupo;
     Spinner sp_pe_horario,sp_pe_area;
     CuadrosDialogo cuadrosDialogo = new CuadrosDialogo();
+    LetrasNumerosAleatorios aleatorios = new LetrasNumerosAleatorios();
+    private static final long tiempoEspera = 4500;
+    int dimensionCodigo = 7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +67,7 @@ public class PersonalActivity extends AppCompatActivity {
     }
 
     private void evaluarCampos() {
+
         if ((et_pe_nombre.getText().toString().length() > 0) &&
                 (et_pe_apPaterno.getText().toString().length() > 0) &&
                 (et_pe_apMaterno.getText().toString().length() > 0) &&
@@ -76,19 +83,18 @@ public class PersonalActivity extends AppCompatActivity {
             String telefono = et_pe_telefono.getText().toString();
             String sede = et_pe_sede.getText().toString();
             String cupo = et_pe_cupo.getText().toString();
+            String contrasena = aleatorios.codigoAleatorio(dimensionCodigo);
 
             HttpHandler handler = new HttpHandler();
-            String txt = handler.postPersonal(nombre_personal, apellido_m, apellido_p,
-                    "", lada, telefono,sede, cupo);
+            String respuesta = handler.postPersonal(nombre_personal, apellido_m, apellido_p,
+                    contrasena, lada, telefono,sede, cupo);
 
-            cuadrosDialogo.cuadroDialogo(
-                    getString(R.string.st_aceptar),
-                    getString(R.string.ms_contrasenaEnviada),
-                    getString(R.string.st_adicionExitosa),
-                    this);
-
-            finish();
-
+            if (respuesta.equals("true")){
+                inserccionCorrecta();
+                enviarContrasena(lada+telefono,getString(R.string.ms_tuContrasena)+" "+contrasena);
+            }else {
+                errorInserccion("Error: "+respuesta);
+            }
         }else {
 
             cuadrosDialogo.cuadroDialogo(
@@ -97,6 +103,42 @@ public class PersonalActivity extends AppCompatActivity {
                     getString(R.string.st_hey),
                     this);
         }
+    }
+
+    private void enviarContrasena(String telefono,String contrasena){
+        HttpHandler handler = new HttpHandler();
+        handler.postContrasena(telefono,contrasena);
+    }
+
+    private void inserccionCorrecta(){
+        cuadrosDialogo.cuadroDialogo(
+                getString(R.string.st_aceptar),
+                getString(R.string.ms_contrasenaEnviada),
+                getString(R.string.st_adicionExitosa),
+                this);
+
+        cerrarActivity();
+    }
+
+    private void errorInserccion(String respuesta){
+        cuadrosDialogo.cuadroDialogo(
+                getString(R.string.st_aceptar),
+                getString(R.string.ms_errorDatos)+ "\nError: "+respuesta,
+                getString(R.string.st_hey),
+                this);
+    }
+    private void cerrarActivity(){
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                //cerrar splashActivity (actual activity)
+                finish();
+            }
+        };
+
+        //ejecutar tiempo de espera para simular la carga de la aplicacion
+        Timer timer = new Timer();
+        timer.schedule(task, tiempoEspera);
     }
 
     //metodo privado que mostrara un toast, de mensaje contendra variables
