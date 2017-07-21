@@ -83,7 +83,7 @@
     <string name="st_notificaciones">Notifications</string>
     <string name="st_informacion">Information</string>
     <string name="ms_informacionTitulo">A care manager, in the mobile community.  RASPED and logatipos are dedicated brands.  This application was created with open source software.</string>
-    <string name="ms_restablecerContrasena">Restore password</string>
+    <string name="ms_restablecerContrasena">Type your telephone number to send you  a key to restore password</string>
     <string name="pref_default_display_name">name</string>
     <string name="sp_apellidoMPersonal_key" translatable="false">sp_apellidoMPersonal_key</string>
     <string name="sp_apellidoPPersonal_key" translatable="false">sp_apellidoPPersonal_key</string>
@@ -109,4 +109,15 @@
     <string name="st_sede">Headquarters</string>
     <string name="st_actualizar">Update</string>
     <string name="st_cerrarSesion">Sing Out</string>
+    <string name="st_registrarEntrada">Check in</string>
+    <string name="st_registrarSalida">Check out</string>
+    <string name="st_registrarComidaInicio">Food time started</string>
+    <string name="st_registrarComidaFin">Food time Finished</string>
+    <string name="st_hey">Hey!</string>
+    <string name="st_recuperarContrasena">Restore password</string>
+    <string name="st_registroExitoso">Successfully</string>
+    <string name="sp_tiempos_key" translatable="false">sp_tiempos_key</string>
+    <string name="ms_errorDatos">Failed to capture data</string>
+    <string name="st_adicionExitosa">Successful addition</string>
+    <string name="ms_contrasenaEnviada">The password will be sent to the registered number</string>
 </resources>

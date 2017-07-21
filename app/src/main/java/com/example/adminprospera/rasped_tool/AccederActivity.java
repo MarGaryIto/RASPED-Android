@@ -8,7 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -40,7 +42,6 @@ public class AccederActivity extends AppCompatActivity {
     String linkPuestos = "https://rasped.herokuapp.com/content/puestos.php";
     String linkHorarios = "https://rasped.herokuapp.com/content/horarios.php";
     CuadrosDialogo cuadrosDialogo;
-    ProgressDialog progressDoalog;
 
 
     @Override
@@ -77,37 +78,36 @@ public class AccederActivity extends AppCompatActivity {
                 evaluaCredenciales();
 
             }else if(id==tv_ac_restablecerContrasena.getId()){
-                DialogoConfirmacion dialogoConfirmacion = new DialogoConfirmacion();
+                obtenerTelefono();
             }
 
         }
     };
 
-    @SuppressLint("ValidFragment")
-    public class DialogoConfirmacion extends DialogFragment {
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
+    private void obtenerTelefono(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final EditText input = new EditText(this);
+        builder.setTitle(getString(R.string.ms_restablecerContrasena))
+                .setView(input)
+                .setPositiveButton(getString(R.string.st_aceptar),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                recuperarContrasena(input.getText().toString());
+                            }
+                        })
+                .setNegativeButton(getString(R.string.st_cancelar),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
 
-            AlertDialog.Builder builder =
-                    new AlertDialog.Builder(getActivity());
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 
-            builder.setMessage("¿Confirma la acción seleccionada?")
-                    .setTitle("Confirmacion")
-                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener()  {
-                        public void onClick(DialogInterface dialog, int id) {
-                            Log.i("Dialogos", "Confirmacion Aceptada.");
-                            dialog.cancel();
-                        }
-                    })
-                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            Log.i("Dialogos", "Confirmacion Cancelada.");
-                            dialog.cancel();
-                        }
-                    });
-
-            return builder.create();
-        }
+    private void recuperarContrasena(String telefono){
+        mostrarToast(telefono);
     }
 
     private void EnviarMensaje (String Numero, String Mensaje){
@@ -177,7 +177,12 @@ public class AccederActivity extends AppCompatActivity {
 
                     //si no se encontro usuario, entonces el usuario con los datos dijitados no existe
                 }else {
-                    mostrarToast(getString(R.string.ms_usuarioNoEncontrado));
+                    cuadrosDialogo.cuadroDialogo(
+                            getString(R.string.st_aceptar),
+                            getString(R.string.ms_usuarioNoEncontrado),
+                            getString(R.string.st_hey),
+                            this
+                    );
                 }
 
                 //mostrar error en caso de fallo para la evaluacion de tipo de usuario y contraseña
@@ -187,8 +192,11 @@ public class AccederActivity extends AppCompatActivity {
 
             //si los campos de texto estan vacios, mostrar mensaje
         }else{
-            mostrarToast(getString(R.string.ms_camposVacios));
-            //progressDoalog.dismiss();
+            cuadrosDialogo.cuadroDialogo(
+                    (getString(R.string.st_aceptar)),
+                    (getString(R.string.ms_camposVacios)),
+                    (getString(R.string.st_hey)),
+                    AccederActivity.this);
         }
     }
 
@@ -226,7 +234,12 @@ public class AccederActivity extends AppCompatActivity {
             //devolucion de un true (evaluacion de contraseña correcta)
             return true;
         }else{
-            mostrarToast(getString(R.string.ms_credencialesIncorrectas));
+            cuadrosDialogo.cuadroDialogo(
+                    getString(R.string.st_aceptar),
+                    getString(R.string.ms_credencialesIncorrectas),
+                    getString(R.string.st_hey),
+                    AccederActivity.this
+            );
             return false;
         }
     }

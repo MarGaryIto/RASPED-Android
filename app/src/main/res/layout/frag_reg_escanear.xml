@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <Button
+        android:id="@+id/bt_reg_entrada_esc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/st_escanear"/>
+        android:text="@string/st_hrEntrada"/>
 
+    <Button
+        android:id="@+id/bt_reg_inicioComida_esc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/st_inicioComida"/>
 
+    <Button
+        android:id="@+id/bt_reg_finComida_esc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/st_registrarComidaFin"/>
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/bt_reg_salida_esc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/st_registrarSalida"/>
+
+</LinearLayout>

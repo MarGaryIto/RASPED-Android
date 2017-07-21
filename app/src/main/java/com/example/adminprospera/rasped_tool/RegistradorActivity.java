@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -14,20 +15,20 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class RegistradorActivity extends AppCompatActivity {
 
     Toolbar tb_reg;
     TextView tv_reg_tBDescrip;
-    Button bt_reg_scanear;
-
+    ObtenerFechasHoras obtenerFechasHoras = new ObtenerFechasHoras();
+    CuadrosDialogo cuadrosDialogo = new CuadrosDialogo();
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -42,17 +43,9 @@ public class RegistradorActivity extends AppCompatActivity {
         tl_reg.setupWithViewPager(vp_reg);
         tb_reg = (Toolbar) findViewById(R.id.tb_reg);
         tv_reg_tBDescrip = (TextView) findViewById(R.id.tv_reg_tBDescrip);
-        bt_reg_scanear = (Button) findViewById(R.id.bt_reg_scanear);
 
         //poblar titulo y subtitulo de ActionBar
         poblarActionBar();
-
-        bt_reg_scanear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new IntentIntegrator(RegistradorActivity.this).initiateScan();
-            }
-        });
     }
 
     @Override
@@ -70,15 +63,51 @@ public class RegistradorActivity extends AppCompatActivity {
     }
 
     private void updateUITextViews(String scan_result, String scan_result_format) {
-        mostrarToast("resultado"+scan_result);
+        evaluaResultado(""+scan_result);
     }
 
-    private void mostrarToast(String mensaje){
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
+    private void evaluaResultado(String resultado){
 
-        Toast toast = Toast.makeText(context, mensaje, duration);
-        toast.show();
+        if(resultado.length()==6){
+
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+
+            SharedPreferences prefs = getSharedPreferences(getString(R.string.sp_tiempos_key),Context.MODE_PRIVATE);
+            String tiempo = prefs.getString(getString(R.string.sp_tiempos_key),"");
+            prefs.edit().clear();
+            String fecha = obtenerFechasHoras.fecha();
+            String hora = obtenerFechasHoras.hora();
+
+            HttpHandler handler = new HttpHandler();
+            String txt = handler.postAsistencia(tiempo,resultado,fecha,hora);
+
+            if(txt.equals("true")){
+                cuadrosDialogo.cuadroDialogo(
+                        getString(R.string.st_aceptar),
+                        getString(R.string.st_registroExitoso),
+                        getString(R.string.st_hey),
+                        this
+                );
+            }else {
+                cuadrosDialogo.cuadroDialogo(
+                        getString(R.string.st_aceptar),
+                        getString(R.string.ms_usuarioNoEncontrado),
+                        getString(R.string.st_hey),
+                        this
+                );
+            }
+
+
+
+        }else {
+            cuadrosDialogo.cuadroDialogo(
+                    getString(R.string.st_aceptar),
+                    getString(R.string.ms_errorDatos),
+                    getString(R.string.st_hey),
+                    this
+            );
+        }
     }
 
     //metodo privado para asignarle titulo y subtitulo al toolbar con los datos de usuario

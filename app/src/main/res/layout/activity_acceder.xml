@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="15dp"
             android:gravity="end"
-            android:text="@string/ms_restablecerContrasena"
+            android:text="@string/st_recuperarContrasena"
             android:textColor="@color/colorBlueGray_B65"/>
 
     </LinearLayout>

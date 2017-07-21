@@ -42,11 +42,21 @@
     <string name="ms_informacionTitulo">Un administrador asistencial, en la comunidad móvil.</string>
     <string name="pref_default_display_name">Display nombre</string>
     <string name="pref_description_social_recommendations">Esta aplicación se creo con software de codigo abierto.</string>
-    <string name="ms_restablecerContrasena">Resstablecer contraseña</string>
+    <string name="ms_restablecerContrasena">Dijita tu telefono para enviarte una contraseña nueva</string>
     <string name="pref_editarDatos">Editar mis datos</string>
     <string name="st_cupo">Cupo</string>
     <string name="title_activity_configuracion">Configuración</string>
     <string name="st_sede">Sede</string>
     <string name="st_actualizar">Actualizar</string>
     <string name="st_cerrarSesion">Cerrar Sesion</string>
+    <string name="st_registrarEntrada">Registrar Entrada</string>
+    <string name="st_registrarSalida">Registrar Salida</string>
+    <string name="st_registrarComidaInicio">Inicio comida</string>
+    <string name="st_registrarComidaFin">Fin de comida</string>
+    <string name="st_hey">Hey!</string>
+    <string name="st_recuperarContrasena">Recuperar contraseña</string>
+    <string name="st_registroExitoso">Registro exitoso</string>
+    <string name="ms_errorDatos">Error al capturar datos</string>
+    <string name="st_adicionExitosa">Adición exitosa</string>
+    <string name="ms_contrasenaEnviada">La contraseña será enviada al número registrado</string>
 </resources>
