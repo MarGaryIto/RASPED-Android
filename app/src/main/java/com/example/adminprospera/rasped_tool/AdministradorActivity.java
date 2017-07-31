@@ -1,8 +1,11 @@
 package com.example.adminprospera.rasped_tool;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -34,9 +37,12 @@ public class AdministradorActivity extends AppCompatActivity {
     ViewPager vp_ad;
     FloatingActionButton fab_personal,fab_horarios,fab_puestos;
     Toolbar tb_ad;
-    String[] arraryPersonal;
     JSONArray jsonArray = null;
-    URL url = null;
+    String linkAsistencias = "https://rasped.herokuapp.com/content/asistencias.php";
+    String linkRetardos = "https://rasped.herokuapp.com/content/retardos.php";
+    String linkFaltas = "https://rasped.herokuapp.com/content/faltas.php";
+    CuadrosDialogo cuadrosDialogo;
+
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
@@ -72,6 +78,169 @@ public class AdministradorActivity extends AppCompatActivity {
         //poblar titulo y subtitulo de ActionBar
         poblarActionBar();
 
+        if (conexcionInternet()){
+            mostrarToast("conextado");
+            llenarListas();
+        }else {
+            mostrarToast("desconectado");
+        }
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //metodo privado para llenar arreglo arrayIdSedes
+    private void llenarListas(){
+        //creacion de un hilo
+        Thread tr = new Thread(){
+            @Override
+            public void run(){
+
+                //casteo de una clase exterior
+                MetodosJson metodosJson = new MetodosJson();
+
+                //llenar la url
+                URL ulrAsistencias = metodosJson.crearURL(linkAsistencias);
+                URL ulrRetardos = metodosJson.crearURL(linkRetardos);
+                URL ulrFaltas = metodosJson.crearURL(linkFaltas);
+
+                //obtencion del json atraves de la clase exterior y la url
+                final String jsonAsistencias = metodosJson.obtenerJSON(ulrAsistencias);
+                final String jsonRetardos = metodosJson.obtenerJSON(ulrRetardos);
+                final String jsonFaltas = metodosJson.obtenerJSON(ulrFaltas);
+
+                //creacion de un runOnUiThread para usar la clase llenaArreglo()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        llenaPrefersAsistencias(jsonAsistencias);
+                        llenaPrefersRetardos(jsonRetardos);
+                        llenaPrefersFaltas(jsonFaltas);
+                    }
+                });
+            }
+        };
+        //ejecucion del hilo
+        tr.run();
+    }
+
+
+    //metodo privado que llena el arreglo arrayIdSedes que llena el lv_ad_personal
+    private void llenaPrefersAsistencias(String json){
+        try{
+            //preparar el arreglo JSON
+            jsonArray = new JSONArray(json);
+            int registros = jsonArray.length();
+            //preparar el arreglo Android
+
+            Context context = this.getApplicationContext();
+            SharedPreferences sp_asistencias = context.getSharedPreferences(getString(R.string.sp_asistencias_key),Context.MODE_PRIVATE);
+            @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_asistencias.edit();
+
+            for (int i=0;i<registros;i++){
+                //preparar un objeto JSON para la extraccion de datos
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                editor.putString("asistencias"+getString(R.string.sp_cupoPersonal_key)+i,jsonObject.getString("cupo"));
+                editor.putString("asistencias"+getString(R.string.sp_id_personal_key)+i,jsonObject.getString("id_personal"));
+                editor.putString("asistencias"+getString(R.string.sp_id_asistencias_key)+i,jsonObject.getString("id_asistencias"));
+                editor.putString("asistencias"+getString(R.string.sp_nombre_personal_key)+i,jsonObject.getString("nombre_personal"));
+                editor.putString("asistencias"+getString(R.string.sp_apellido_m_key)+i,jsonObject.getString("apellido_m"));
+                editor.putString("asistencias"+getString(R.string.sp_apellido_p_key)+i,jsonObject.getString("apellido_p"));
+                editor.putString("asistencias"+getString(R.string.sp_fecha_key)+i,jsonObject.getString("fecha"));
+                editor.putString("asistencias"+getString(R.string.sp_hr_entrada_key)+i,jsonObject.getString("hr_entrada"));
+                editor.putString("asistencias"+getString(R.string.sp_hr_comida_i_key)+i,jsonObject.getString("hr_comida_i"));
+                editor.putString("asistencias"+getString(R.string.sp_hr_comida_f_key)+i,jsonObject.getString("hr_comida_f"));
+                editor.putString("asistencias"+getString(R.string.sp_hr_salida_key)+i,jsonObject.getString("hr_salida"));
+
+            }
+            editor.putInt(getString(R.string.sp_numAsistencias_key),registros);
+            editor.apply();
+        }catch (JSONException e){
+            cuadrosDialogo.cuadroDialogo("ok",e.toString(),e.getMessage(),this);
+        }
+    }
+
+    //metodo privado que llena el arreglo arrayIdSedes que llena el lv_ad_personal
+    private void llenaPrefersRetardos(String json){
+        try{
+            //preparar el arreglo JSON
+            jsonArray = new JSONArray(json);
+            int registros = jsonArray.length();
+            //preparar el arreglo Android
+
+            Context context = this.getApplicationContext();
+            SharedPreferences sp_retardos = context.getSharedPreferences(getString(R.string.sp_retardos_key),Context.MODE_PRIVATE);
+            @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_retardos.edit();
+
+            for (int i=0;i<registros;i++){
+                //preparar un objeto JSON para la extraccion de datos
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                editor.putString("retardos"+getString(R.string.sp_id_personal_key)+i,jsonObject.getString("id_personal"));
+                editor.putString("retardos"+getString(R.string.sp_cupoPersonal_key)+i,jsonObject.getString("cupo"));
+                editor.putString("retardos"+getString(R.string.sp_id_retardos_key)+i,jsonObject.getString("id_retardos"));
+                editor.putString("retardos"+getString(R.string.sp_nombre_personal_key)+i,jsonObject.getString("nombre_personal"));
+                editor.putString("retardos"+getString(R.string.sp_apellido_m_key)+i,jsonObject.getString("apellido_m"));
+                editor.putString("retardos"+getString(R.string.sp_apellido_p_key)+i,jsonObject.getString("apellido_p"));
+                editor.putString("retardos"+getString(R.string.sp_fecha_key)+i,jsonObject.getString("fecha"));
+                editor.putString("retardos"+getString(R.string.sp_hr_entrada_key)+i,jsonObject.getString("hr_entrada"));
+                editor.putString("retardos"+getString(R.string.sp_hr_comida_i_key)+i,jsonObject.getString("hr_comida_i"));
+                editor.putString("retardos"+getString(R.string.sp_hr_comida_f_key)+i,jsonObject.getString("hr_comida_f"));
+                editor.putString("retardos"+getString(R.string.sp_hr_salida_key)+i,jsonObject.getString("hr_salida"));
+
+            }
+            editor.putInt(getString(R.string.sp_numRetardos_key),registros);
+            editor.apply();
+        }catch (JSONException e){
+            cuadrosDialogo.cuadroDialogo("ok",e.toString(),e.getMessage(),this);
+        }
+    }
+
+    //metodo privado que llena el arreglo arrayIdSedes que llena el lv_ad_personal
+    private void llenaPrefersFaltas(String json){
+        try{
+            //preparar el arreglo JSON
+            jsonArray = new JSONArray(json);
+            int registros = jsonArray.length();
+            //preparar el arreglo Android
+
+            Context context = this.getApplicationContext();
+            SharedPreferences sp_faltas = context.getSharedPreferences(getString(R.string.sp_faltas_key),Context.MODE_PRIVATE);
+            @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_faltas.edit();
+
+            for (int i=0;i<registros;i++){
+                //preparar un objeto JSON para la extraccion de datos
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                editor.putString("faltas"+getString(R.string.sp_id_personal_key)+i,jsonObject.getString("id_personal"));
+                editor.putString("faltas"+getString(R.string.sp_cupoPersonal_key)+i,jsonObject.getString("cupo"));
+                editor.putString("faltas"+getString(R.string.sp_id_falta_key)+i,jsonObject.getString("id_falta"));
+                editor.putString("faltas"+getString(R.string.sp_nombre_personal_key)+i,jsonObject.getString("nombre_personal"));
+                editor.putString("faltas"+getString(R.string.sp_apellido_m_key)+i,jsonObject.getString("apellido_m"));
+                editor.putString("faltas"+getString(R.string.sp_apellido_p_key)+i,jsonObject.getString("apellido_p"));
+                editor.putString("faltas"+getString(R.string.sp_fecha_key)+i,jsonObject.getString("fecha"));
+
+            }
+            editor.putInt(getString(R.string.sp_numFaltas_key),registros);
+            editor.apply();
+        }catch (JSONException e){
+            cuadrosDialogo.cuadroDialogo("ok",e.toString(),e.getMessage(),this);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //comprobar si la Network es habilitada
+    public boolean conexcionInternet() {
+        try {
+            Context context = getBaseContext();
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
+        }catch (Exception e){
+            mostrarToast(e.getMessage());
+        }
+        return false;
     }
 
     //declaracion del escuchador para asignarse a un ViewPager
@@ -261,9 +430,9 @@ public class AdministradorActivity extends AppCompatActivity {
     //metodo privado que codifica el contenido del viewPager(pestañas superiores)
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new FragAdmPersonal(), getString(R.string.st_personal));
-        adapter.addFragment(new FragAdmHorarios(),  getString(R.string.st_horarios));
-        adapter.addFragment(new FragAdmPuestos(),  getString(R.string.st_puestos));
+        adapter.addFragment(new FragAdmAsistencias(), getString(R.string.st_asistencia));
+        adapter.addFragment(new FragAdmRetardos(),  getString(R.string.st_retardos));
+        adapter.addFragment(new FragAdmFaltas(),  getString(R.string.st_faltas));
         viewPager.setAdapter(adapter);
     }
 

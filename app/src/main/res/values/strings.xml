@@ -15,8 +15,8 @@
     <string name="title_activity_usuarios">Users</string>
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="st_hoy">Today</string>
-    <string name="st_semanal">week</string>
-    <string name="st_mensual">Month</string>
+    <string name="st_semanal">Weekly</string>
+    <string name="st_mensual">Monthly</string>
     <string name="st_escanear">To scan</string>
     <string name="st_capturar">To type</string>
     <string name="title_activity_registrador">Typer</string>
@@ -58,7 +58,6 @@
     <string name="pref_title_display_name" translatable="false">Display name</string>
 
     <string name="pref_title_add_friends_to_messages" translatable="false">Add friends to messages</string>
-
 
 
     <!-- Example settings for Data & Sync -->
@@ -121,4 +120,27 @@
     <string name="st_adicionExitosa">Successful addition</string>
     <string name="ms_contrasenaEnviada">The password will be sent to the registered number</string>
     <string name="ms_tuContrasena">Your new password in RASPED is</string>
+    <string name="st_asistencia">Attendance</string>
+    <string name="st_retardos">Delays</string>
+    <string name="st_faltas">Absences</string>
+    <string name="st_visualizar">View by</string>
+    <string name="st_diario">Daily</string>
+    <string name="sp_asistencias_key" translatable="false">sp_asistencias_key</string>
+    <string name="sp_id_personal_key" translatable="false">sp_id_personal_key</string>
+    <string name="sp_id_asistencias_key" translatable="false">sp_id_asistencias_key</string>
+    <string name="sp_id_retardos_key" translatable="false">sp_id_retardos_key</string>
+    <string name="sp_id_falta_key" translatable="false">sp_id_falta_key</string>
+    <string name="sp_nombre_personal_key" translatable="false">sp_nombre_personal_key</string>
+    <string name="sp_apellido_m_key" translatable="false">sp_apellido_m_key</string>
+    <string name="sp_apellido_p_key" translatable="false">sp_apellido_p_key</string>
+    <string name="sp_fecha_key" translatable="false">sp_fecha_key</string>
+    <string name="sp_hr_entrada_key" translatable="false">sp_hr_entrada_key</string>
+    <string name="sp_hr_comida_i_key" translatable="false">sp_hr_comida_i_key</string>
+    <string name="sp_hr_comida_f_key" translatable="false">sp_hr_comida_f_key</string>
+    <string name="sp_hr_salida_key" translatable="false">sp_hr_salida_key</string>
+    <string name="sp_numAsistencias_key" translatable="false">sp_numAsistencias_key</string>
+    <string name="sp_numRetardos_key" translatable="false">sp_numRetardos_key</string>
+    <string name="sp_numFaltas_key" translatable="false">sp_numFaltas_key</string>
+    <string name="sp_retardos_key" translatable="false">sp_retardos_key</string>
+    <string name="sp_faltas_key" translatable="false">sp_faltas_key</string>
 </resources>

@@ -11,7 +11,7 @@
     <string name="st_puestos">Puestos</string>
     <string name="st_configuracion">Configuraciones</string>
     <string name="st_hoy">Hoy</string>
-    <string name="st_semanal">semanal</string>
+    <string name="st_semanal">Semanal</string>
     <string name="st_mensual">Mensual</string>
     <string name="st_escanear">Escanear</string>
     <string name="st_capturar">Capturar</string>
@@ -60,4 +60,9 @@
     <string name="st_adicionExitosa">Adición exitosa</string>
     <string name="ms_contrasenaEnviada">La contraseña será enviada al número registrado</string>
     <string name="ms_tuContrasena">"Tu nueva contrasenia para RASPED es "</string>
+    <string name="st_asistencia">Asistencias</string>
+    <string name="st_retardos">Retardos</string>
+    <string name="st_faltas">Faltas</string>
+    <string name="st_visualizar">Visualizar</string>
+    <string name="st_diario">Diario</string>
 </resources>
