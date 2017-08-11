@@ -1,6 +1,7 @@
 package com.example.adminprospera.rasped_tool;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,17 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class FragAdmRetardos extends Fragment {
 
-    Spinner sp_adm_filtrar;
     private Adapter adapterListView;
     ArrayList<ModelAdministrador> model = new ArrayList<>();
     private Boolean lvLleno = false;
@@ -41,7 +39,6 @@ public class FragAdmRetardos extends Fragment {
         View view = inflater.inflate(R.layout.fragment_frag_adm_retardos, container, false);
 
         //traer el elemento spinner para trabajar con el
-        sp_adm_filtrar = (Spinner) view.findViewById(R.id.sp_adm_filtrar);
         ListView lv_adm_retardos = (ListView) view.findViewById(R.id.lv_adm_retardos);
 
         //evaluacion: si el listView esta vacio se poblara
@@ -57,9 +54,6 @@ public class FragAdmRetardos extends Fragment {
 
         //una vez lleno el listView, se configura su estado a lleno
         lvLleno = true;
-
-        //usar la clase configurarSpinner para poblar y establecer actividades al sp_adm_filtrar
-        configurarSpinner();
 
         //asignar un listener al listView
         lv_adm_retardos.setOnItemClickListener(listenerListView);
@@ -99,24 +93,8 @@ public class FragAdmRetardos extends Fragment {
             //una vez asignadas las variables, se añaden al model
             model.add(modelAdministrador);
         }
-    }
 
-    //metodo para llenar spinner para filtrar el contenido
-    private void configurarSpinner(){
-
-        //crear arreglo que contenga los encabezados del filtro
-        String[] filtro = {
-                getString(R.string.st_diario),
-                getString(R.string.st_semanal),
-                getString(R.string.st_mensual)};
-
-        //colocar los encabezados del filtro al spinner
-        sp_adm_filtrar.setAdapter(new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_spinner_item,
-                filtro));
-
-        //Asignar listener al spinner para establecer tarea al item/filtro seleccionado
-        sp_adm_filtrar.setOnItemSelectedListener(listenerSpinner);
+        lvLleno=true;
     }
 
     AdapterView.OnItemClickListener listenerListView = new AdapterView.OnItemClickListener() {
@@ -124,59 +102,20 @@ public class FragAdmRetardos extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             try {
                 ModelAdministrador modelAdministrador = (ModelAdministrador) adapterListView.getItem(position);
-                Toast.makeText(getActivity(),modelAdministrador.getCupo(),Toast.LENGTH_SHORT).show();
+                //extraer el id del personal seleccionado
+                String cupo = modelAdministrador.getCupo();
+
+                //preparar un intent que abrira el activity del usuario seleccionado
+                Intent intent = (new Intent(getActivity(), UsuariosActivity.class));
+
+                //enviar parametro: id_personal
+                intent.putExtra("cupo",cupo);
+
+                //ejecucion del activity
+                startActivityForResult(intent,0);
             }catch (Exception e){
                 Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_SHORT).show();
             }
         }
     };
-
-    //listener el Spinner que contiene las actividades al ser accionado algun item
-    AdapterView.OnItemSelectedListener listenerSpinner = new AdapterView.OnItemSelectedListener() {
-        //el parametro primero es al presionar un item/filtro
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id){
-
-            //se evalua el numero de item presionado, el texto no porque varia al cambiar idioma
-            switch (pos){
-                case 0:
-                    filtrarDiario();
-                    break;
-                case 1:
-                    filtrarSemanal();
-                    break;
-                case 2:
-                    filtrarMensual();
-                    break;
-            }
-        }
-
-        //el parametro segundo obligadorio es al no tener algun item activo
-        @Override
-        public void onNothingSelected(AdapterView<?> parent){ /*obligatorio, aún vacio*/   }
-    };
-
-    //metodo privado que filtra los registros a solo los de la fecha actual
-    private void filtrarDiario(){
-
-    }
-
-    //metodo privado que filtra los registros a solo los de la semana actual
-    private void filtrarSemanal(){
-
-    }
-
-    //metodo privado que filtra los registros a solo los del mes actual
-    private void filtrarMensual(){
-
-    }
-
-    //metodo privado que mostrara un toast, de mensaje contendra variables
-    private void mostrarToast(String mensaje){
-        Context context = getContext();
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, mensaje, duration);
-        toast.show();
-    }
 }

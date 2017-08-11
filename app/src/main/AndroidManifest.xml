@@ -24,7 +24,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
             </intent-filter>
         </activity>
         <activity android:name=".AccederActivity" />
@@ -40,15 +39,19 @@
             android:name=".UsuariosActivity"
             android:label="@string/title_activity_usuarios"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HorariosActivity"
-            android:parentActivityName=".AdministradorActivity" />
+        <activity android:name=".HorariosActivity" />
         <activity android:name=".PersonalActivity" />
-        <activity
-            android:name=".ConfiguracionActivity"
-            android:label="@string/title_activity_configuracion" />
         <activity android:name=".InformacionActivity" />
-        <activity android:name=".EscanerActivity"/>
+        <activity android:name=".EscanerActivity" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".ContrasenaActivity" />
+        <activity
+            android:name=".TodosHorariosActivity"
+            android:label="@string/title_activity_todos_horarios"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".TodoPersonalActivity"></activity>
     </application>
 
 </manifest>

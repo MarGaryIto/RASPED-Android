@@ -1,21 +1,15 @@
 package com.example.adminprospera.rasped_tool;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,6 +37,10 @@ public class AccederActivity extends AppCompatActivity {
     String linkHorarios = "https://rasped.herokuapp.com/content/horarios.php";
     CuadrosDialogo cuadrosDialogo;
 
+    protected int splashTime = 3000;
+    String[] name = {"A","N","D","R","O","I","D"};
+    int timer =0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +62,7 @@ public class AccederActivity extends AppCompatActivity {
         tv_ac_restablecerContrasena.setOnClickListener(tareaAcceder);
 
         cuadrosDialogo = new CuadrosDialogo();
+
 
     }
 
@@ -110,19 +109,6 @@ public class AccederActivity extends AppCompatActivity {
         mostrarToast(telefono);
     }
 
-    private void EnviarMensaje (String Numero, String Mensaje){
-        try {
-            SmsManager sms = SmsManager.getDefault();
-            sms.sendTextMessage(Numero,null,Mensaje,null,null);
-            Toast.makeText(getApplicationContext(), "Mensaje Enviado.", Toast.LENGTH_LONG).show();
-        }
-
-        catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Mensaje no enviado, datos incorrectos.", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-
-    }
 
     //metodo privado que almacena el contenido de los editText a cadenas de texto tipo String
     private void datosACadena(){
@@ -216,6 +202,7 @@ public class AccederActivity extends AppCompatActivity {
         editor.putString(getString(R.string.sp_horarioPersonal_key),arrayCredenciales[9]);
         editor.putString(getString(R.string.sp_puestoPersonal_key),arrayCredenciales[10]);
         editor.putString(getString(R.string.sp_usuarioPersonal_key),arrayCredenciales[11]);
+        editor.putString("sp_contrasenaPersonal",st_contraseña);
         editor.apply();
     }
 
@@ -226,14 +213,20 @@ public class AccederActivity extends AppCompatActivity {
         cifrar objCifrar = new cifrar();
         st_contraseña = objCifrar.md5(st_contraseña);
 
-        //mostrar error en caso de que la contraseña haya sido incorrecta
+        //comparar la contraseña almacenada en el arreglo arrayCredenciales en la posicion 8
+        // con la contraseña previamente encriptada ingresada
         if(arrayCredenciales[8].equals(st_contraseña)){
 
+            //en caso de ser iguales, llenar el arregloPersonal con los datos del personal y
+            // almacenarlos en memoria temporal del celular
             llenarArregloPersonal();
 
             //devolucion de un true (evaluacion de contraseña correcta)
             return true;
         }else{
+
+            //si la contraseña es incorrecta mostrar un cuadro de alerta con el siguientecontenido:
+            // un boton de aceptar, una describpcion, un titulo y en que activity se mostrara
             cuadrosDialogo.cuadroDialogo(
                     getString(R.string.st_aceptar),
                     getString(R.string.ms_credencialesIncorrectas),
@@ -287,10 +280,11 @@ public class AccederActivity extends AppCompatActivity {
         }
     }
 
-    //metodo privado que llena el arreglo arrayIdSedes que llena el lv_ad_personal
+    //metodo privado que pobla arrayPersonal de la base de datos remota desde un JavaScrip Object
+    // Notation (JSON) un formato de texto ligero para intercambio de datos
     private void llenaArregloPersonal(String json){
         try{
-            //preparar el arreglo JSON
+            //preparar el objeto JSON que contendra los resultados de una consulta de base de datos
             jsonArray = new JSONArray(json);
         }catch (JSONException e){
             mostrarToast("error: "+e.getMessage());
@@ -560,7 +554,13 @@ public class AccederActivity extends AppCompatActivity {
 
     //metodo privada para abrir usuariosActivity
     private void abrirUsusariosActivity(){
+        Context context = this.getApplicationContext();
+        SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
+        String sede = sp_datosPersonal.getString(getString(R.string.sp_sedePersonal_key),"0");
+        String cupo = sp_datosPersonal.getString(getString(R.string.sp_cupoPersonal_key),"0");
+        String parametro_cupo = sede+cupo;
         Intent intent = new Intent(this, UsuariosActivity.class);
+        intent.putExtra("cupo",parametro_cupo);
         startActivityForResult(intent,0);
         finish();
     }

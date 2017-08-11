@@ -140,9 +140,6 @@ public class RegistradorActivity extends AppCompatActivity {
                 case R.id.it_actualizar:
                     actualizarTablas();
                     break;
-                case R.id.it_cerrarSesion:
-                    cerrarSesion();
-                    break;
             }
             return false;
         }
@@ -150,40 +147,13 @@ public class RegistradorActivity extends AppCompatActivity {
 
     //metodo privado para abrir confiuracionActivity
     private void abrirConfiguracionActivity(){
-        Intent intent = new Intent(this, ConfiguracionActivity.class);
+        Intent intent = new Intent(this, SettingsActivity.class);
         startActivityForResult(intent,0);
         //finish();
     }
 
     private void actualizarTablas(){
         //code
-    }
-
-    //metodo privado para cerrar sesion
-    private void cerrarSesion(){
-        //obtencon de context
-        Context context = this.getApplicationContext();
-
-        //extraer archivos temporales
-        SharedPreferences sp_datosPersonal =
-                context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),
-                        Context.MODE_PRIVATE);
-        SharedPreferences sp_datosPuestos =
-                context.getSharedPreferences(getString(R.string.sp_datosPuestos_key),
-                        Context.MODE_PRIVATE);
-
-        //limpiar los archivos temporales
-        sp_datosPersonal.edit().clear().apply();
-        sp_datosPuestos.edit().clear().apply();
-
-        //cerrar este activity y abrir AccederActivity
-        abrirAccederActivity();
-    }
-
-    private void abrirAccederActivity(){
-        Intent intent = new Intent(this, AccederActivity.class);
-        startActivityForResult(intent,0);
-        finish();
     }
 
     private void setupViewPager(ViewPager viewPager) {

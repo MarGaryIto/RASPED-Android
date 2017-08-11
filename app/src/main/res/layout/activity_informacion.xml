@@ -1,9 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.adminprospera.rasped_tool.InformacionActivity">
+    android:padding="30dp"
+    tools:context="com.example.adminprospera.rasped_tool.InformacionActivity"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textColor="@color/colorWhite"
+        android:textSize="30sp"
+        />
+
+    <TextView
+        android:paddingTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/ms_informacionTitulo"
+        android:textColor="@color/colorWhite"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:text="@string/st_version"
+        android:textAlignment="textEnd"
+        android:textColor="@color/colorWhite"
+        tools:ignore="RtlCompat" />
+
+</LinearLayout>

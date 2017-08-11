@@ -107,7 +107,7 @@
     <string name="st_cupo">Cupo</string>
     <string name="st_sede">Headquarters</string>
     <string name="st_actualizar">Update</string>
-    <string name="st_cerrarSesion">Sing Out</string>
+    <string name="st_cerrarSesion">Sing out</string>
     <string name="st_registrarEntrada">Check in</string>
     <string name="st_registrarSalida">Check out</string>
     <string name="st_registrarComidaInicio">Food time started</string>
@@ -143,4 +143,67 @@
     <string name="sp_numFaltas_key" translatable="false">sp_numFaltas_key</string>
     <string name="sp_retardos_key" translatable="false">sp_retardos_key</string>
     <string name="sp_faltas_key" translatable="false">sp_faltas_key</string>
+    <string name="title_activity_settings">Settings</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string name="pref_miCuenta">My count</string>
+    <string name="pref_notificaciones">Notifications</string>
+    <string name="pref_notificacionesDesc">Configures notifications for assists, faults and delays.</string>
+    <string name="pref_notificacionAsistencias">Notify Assists</string>
+    <string name="pref_notificacionesRetardos">Notify delays</string>
+    <string name="pref_notificacionesFaltas">Notify non-attendance</string>
+    <string name="pref_informacion">About</string>
+    <string name="pref_editarDatosDesc">Edit personal information about you.</string>
+    <string name="pref_editarContrasena">Edit password</string>
+    <string name="pref_editarContrasenaDesc">Edit your access password.</string>
+    <string name="st_antContrasena">Old password</string>
+    <string name="st_nvaContrasena">New password</string>
+    <string name="st_repContrasena">Repeat password</string>
+    <string name="pref_acercaDe">About</string>
+    <string name="pref_informacionDes">See information about this app</string>
+    <string name="pref_cerrarSesion">Sign out</string>
+    <string name="pref_cerrarSesionDesc">Restore and sign out</string>
+    <string name="ms_cerrarSesion">Are you sure to sign out?</string>
+    <string name="st_eliminar">Delete</string>
+    <string name="st_tipo">Type</string>
+    <string name="title_activity_todos_horarios">Schedules</string>
+    <string name="st_agregar">Add</string>
+    <string name="st_administrador">Admin</string>
+    <string name="st_registrador">Register</string>
 </resources>

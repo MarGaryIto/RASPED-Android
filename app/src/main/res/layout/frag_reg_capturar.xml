@@ -10,7 +10,7 @@
         android:id="@+id/bt_reg_entrada_cap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/st_inicioComida"/>
+        android:text="@string/st_hrEntrada"/>
 
     <Button
         android:id="@+id/bt_reg_inicioComida_cap"

@@ -1,9 +1,11 @@
 package com.example.adminprospera.rasped_tool;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +20,6 @@ import java.util.ArrayList;
 
 public class FragAdmAsistencias extends Fragment {
 
-    Spinner sp_adm_filtrar;
-    private ListView lv_adm_asistencias;
     private ListAdapter adapterListView;
     ArrayList<ModelAdministrador> model = new ArrayList<>();
     private Boolean lvLleno = false;
@@ -41,8 +41,7 @@ public class FragAdmAsistencias extends Fragment {
         View view = inflater.inflate(R.layout.fragment_frag_adm_asistencias, container, false);
 
         //traer el elemento spinner para trabajar con el
-        sp_adm_filtrar = (Spinner) view.findViewById(R.id.sp_adm_filtrar);
-        lv_adm_asistencias = (ListView) view.findViewById(R.id.lv_adm_asistencias);
+        ListView lv_adm_asistencias = (ListView) view.findViewById(R.id.lv_adm_asistencias);
 
         //evaluacion: si el listView esta vacio se poblara
         if (!lvLleno){
@@ -58,65 +57,58 @@ public class FragAdmAsistencias extends Fragment {
         //una vez lleno el listView, se configura su estado a lleno
         lvLleno = true;
 
-        //usar la clase configurarSpinner para poblar y establecer actividades al sp_adm_filtrar
-        configurarSpinner();
-
         //asignar un listener al listView
         lv_adm_asistencias.setOnItemClickListener(listenerListView);
 
         return view;
     }
 
-    //metodo privado para poblar el model para el ListView
+    //metodo privado para poblar un modelo, dicho modelo contendra los datos para poblar una lista
     private void poblarModelAdministrador(){
 
+        //preparar archivo temporal sp_asistencias que contiene todas las asistencias extraidas de
+        // la base de datos remota
         SharedPreferences sp_asistencias = this.getActivity().getSharedPreferences(
                 getString(R.string.sp_asistencias_key), Context.MODE_PRIVATE);
-        //Instanciar las clases
+
+        //prepara el modelo
         ModelAdministrador modelAdministrador;
 
-        int dimension = sp_asistencias.getInt(
-                getString(R.string.sp_numAsistencias_key),0);
+        //almacenar en una variable el numero de asistencias registradas
+        int dimension = sp_asistencias.getInt(getString(R.string.sp_numAsistencias_key),0);
 
+        SharedPreferences sp_datosPersonal = this.getActivity().getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
+        String cupoCache = sp_datosPersonal.getString(getString(R.string.sp_cupoPersonal_key),"null");
+
+        //ciclo for que se ejecutara segun el numero de asistencias
         for(int i = 0;i<dimension;i++){
+
+
+            //preparar nuevo espacio para el modelo
             modelAdministrador = new ModelAdministrador();
-            //asignar las variables
-            modelAdministrador.setNombrePersonal(sp_asistencias.getString(
-                    "asistencias"+getString(R.string.sp_nombre_personal_key)+i,"null"));
+            //asignar las variables  cupo, fecha etc. desde los valores temporales
+            String cupo = sp_asistencias.getString(
+                    "asistencias"+getString(R.string.sp_cupoPersonal_key)+i,"null");
 
-            modelAdministrador.setCupo(sp_asistencias.getString(
-                    "asistencias"+getString(R.string.sp_cupoPersonal_key)+i,"null"));
+            Log.e("cache: "+cupoCache,"cupo: "+cupo);
 
+            //if (cupoCache.equals(cupo)){
+                modelAdministrador.setNombrePersonal(sp_asistencias.getString(
+                        "asistencias"+getString(R.string.sp_nombre_personal_key)+i,"null"));
+                modelAdministrador.setCupo(cupo);
+                modelAdministrador.setFecha(sp_asistencias.getString(
+                        "asistencias"+getString(R.string.sp_fecha_key)+i,"null"));
+                modelAdministrador.setHora(sp_asistencias.getString(
+                        "asistencias"+getString(R.string.sp_hr_entrada_key)+i,"null"));
+                modelAdministrador.setId_personal(sp_asistencias.getString(
+                        "asistencias"+getString(R.string.sp_id_personal_key)+i,"null"));
+                modelAdministrador.setCodigo(i);
 
-            modelAdministrador.setFecha(sp_asistencias.getString(
-                    "asistencias"+getString(R.string.sp_fecha_key)+i,"null"));
+                //una vez asignadas las variables, se añaden al model
+                model.add(modelAdministrador);
+            //}
 
-            modelAdministrador.setHora(sp_asistencias.getString(
-                    "asistencias"+getString(R.string.sp_hr_entrada_key)+i,"null"));
-
-            modelAdministrador.setCodigo(i);
-
-            //una vez asignadas las variables, se añaden al model
-            model.add(modelAdministrador);
         }
-    }
-
-    //metodo para llenar spinner para filtrar el contenido
-    private void configurarSpinner(){
-
-        //crear arreglo que contenga los encabezados del filtro
-        String[] filtro = {
-                getString(R.string.st_diario),
-                getString(R.string.st_semanal),
-                getString(R.string.st_mensual)};
-
-        //colocar los encabezados del filtro al spinner
-        sp_adm_filtrar.setAdapter(new ArrayAdapter<>(getActivity(),
-                        android.R.layout.simple_spinner_item,
-                        filtro));
-
-        //Asignar listener al spinner para establecer tarea al item/filtro seleccionado
-        sp_adm_filtrar.setOnItemSelectedListener(listenerSpinner);
     }
 
     AdapterView.OnItemClickListener listenerListView = new AdapterView.OnItemClickListener() {
@@ -124,58 +116,22 @@ public class FragAdmAsistencias extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             try {
                 ModelAdministrador modelAdministrador = (ModelAdministrador) adapterListView.getItem(position);
-                Toast.makeText(getActivity(),modelAdministrador.getCupo(),Toast.LENGTH_SHORT).show();
+                //extraer el id del personal seleccionado
+                String cupo = modelAdministrador.getCupo();
+
+                Toast.makeText(getActivity(),cupo,Toast.LENGTH_SHORT).show();
+
+                //preparar un intent que abrira el activity del usuario seleccionado
+                Intent intent = (new Intent(getActivity(), UsuariosActivity.class));
+
+                //enviar parametro: id_personal
+                intent.putExtra("cupo",cupo);
+
+                //ejecucion del activity
+                startActivityForResult(intent,0);
             }catch (Exception e){
                 Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_SHORT).show();
             }
         }
     };
-
-    //listener el Spinner que contiene las actividades al ser accionado algun item
-    AdapterView.OnItemSelectedListener listenerSpinner = new AdapterView.OnItemSelectedListener() {
-        //el parametro primero es al presionar un item/filtro
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id){
-
-            //se evalua el numero de item presionado, el texto no porque varia al cambiar idioma
-            switch (pos){
-                case 0:
-                    filtrarDiario();
-                    break;
-                case 1:
-                    filtrarSemanal();
-                    break;
-                case 2:
-                    filtrarMensual();
-                    break;
-            }
-        }
-
-        //el parametro segundo obligadorio es al no tener algun item activo
-        @Override
-        public void onNothingSelected(AdapterView<?> parent){ /*obligatorio, aún vacio*/   }
-    };
-
-
-
-    //metodo privado que filtra los registros a solo los de la fecha actual
-    private void filtrarDiario(){
-        Context context = getContext();
-        SharedPreferences sp_retardos = context.getSharedPreferences(getString(R.string.sp_retardos_key),Context.MODE_PRIVATE);
-    }
-
-    //metodo privado que filtra los registros a solo los de la semana actual
-    private void filtrarSemanal(){
-
-    }
-
-    //metodo privado que filtra los registros a solo los del mes actual
-    private void filtrarMensual(){
-
-    }
-
-    private void mostrarToast(String mensg){
-        Toast.makeText(getActivity(),mensg,Toast.LENGTH_SHORT).show();
-    }
-
 }

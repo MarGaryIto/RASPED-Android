@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -157,6 +158,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="10dp">
+
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -169,6 +172,29 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/st_puesto">
         </Spinner>
+
     </LinearLayout>
+
+
+    <!--Horarios ImageView y EditText-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_more_horiz_cyan"
+            android:contentDescription="@string/st_tipo"/>
+
+        <Spinner
+            android:id="@+id/sp_pe_tipo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/st_tipo">
+        </Spinner>
+    </LinearLayout>
+
 
 </LinearLayout>

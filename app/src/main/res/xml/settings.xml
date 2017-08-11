@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- MI CUENTA -->
+    <PreferenceCategory
+        android:key="pc_micuenta"
+        android:title="@string/pref_miCuenta">
+
+        <!-- Editar datos personales -->
+        <PreferenceScreen
+            android:key="ps_editarDatos"
+            android:title="@string/pref_editarDatos"
+            android:summary="@string/pref_editarDatosDesc">
+        </PreferenceScreen>
+
+        <!-- Editar contraseña de acceso -->
+        <PreferenceScreen
+            android:key="ps_editarContraseña"
+            android:title="@string/pref_editarContrasena"
+            android:summary="@string/pref_editarContrasenaDesc">
+
+        </PreferenceScreen>
+
+        <!-- Editar contraseña de acceso -->
+        <PreferenceScreen
+            android:key="ps_cerrarSesion"
+            android:title="@string/pref_cerrarSesion"
+            android:summary="@string/pref_cerrarSesionDesc">
+
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+    <!-- NOTIFICACIONES -->
+    <PreferenceCategory
+        android:key="pc_notificaciones"
+        android:title="@string/pref_notificaciones">
+
+        <!-- notificaciones para asistencias -->
+        <SwitchPreference
+            android:key="sp_notificarAsistencias"
+            android:title="@string/pref_notificacionAsistencias"
+            android:defaultValue="false"/>
+
+        <!-- notificaciones para retardos -->
+        <SwitchPreference
+            android:key="sp_notificarRetardos"
+            android:title="@string/pref_notificacionesRetardos"
+            android:defaultValue="true"/>
+
+        <!-- notificaciones para inasistencias -->
+        <SwitchPreference
+            android:key="sp_notificarInasistencias"
+            android:title="@string/pref_notificacionesFaltas"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
+
+    <!-- ACERCA DE -->
+    <PreferenceCategory
+        android:key="pc_acercaDe"
+        android:title="@string/pref_acercaDe">
+
+        <!-- Informacion -->
+        <PreferenceScreen
+            android:key="ps_informacion"
+            android:title="@string/pref_informacion"
+            android:summary="@string/pref_informacionDes">
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

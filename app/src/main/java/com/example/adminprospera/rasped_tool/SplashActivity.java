@@ -66,7 +66,6 @@ public class SplashActivity extends AppCompatActivity {
         Context context = this.getApplicationContext();
         SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
         String usuario = sp_datosPersonal.getString(getString(R.string.sp_usuarioPersonal_key),"null");
-        mostrarToast("usuario");
         switch (usuario){
             case "root":
                 //codigo para usuario root
@@ -121,10 +120,15 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //script para abrir UsuariosActivity
-                Intent intent = new Intent().setClass(SplashActivity.this,UsuariosActivity.class);
-                startActivity(intent);
-
-                //cerrar splashActivity (actual activity)
+                Context context = SplashActivity.this.getApplicationContext();
+                SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
+                String sede = sp_datosPersonal.getString(getString(R.string.sp_sedePersonal_key),"0");
+                String cupo = sp_datosPersonal.getString(getString(R.string.sp_cupoPersonal_key),"0");
+                String parametro_cupo = sede+cupo;
+                Intent intent = new Intent(SplashActivity.this, UsuariosActivity.class);
+                intent.putExtra("cupo",parametro_cupo);
+                startActivityForResult(intent,0);
+                //cerrar splashActivity (actual activity
                 finish();
             }
         };

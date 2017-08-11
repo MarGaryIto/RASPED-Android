@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="40dp"
+    tools:context="com.example.adminprospera.rasped_tool.ContrasenaActivity">
+
+    <!--Antigua contraseña-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_bloquear_nomal"
+            android:contentDescription="@string/st_antContrasena"/>
+
+        <EditText
+            android:id="@+id/et_antContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLength="20"
+            android:ems="20"
+            android:inputType="textWebPassword"
+            android:hint="@string/st_antContrasena"/>
+    </LinearLayout>
+
+    <!-- Antigua contraseña -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_bloquear_contrasena"
+            android:contentDescription="@string/st_nvaContrasena"/>
+
+        <EditText
+            android:id="@+id/et_nvaContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLength="20"
+            android:ems="20"
+            android:inputType="textWebPassword"
+            android:hint="@string/st_nvaContrasena"/>
+    </LinearLayout>
+
+    <!--Antigua contraseña-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_bloquear_contrasena"
+            android:contentDescription="@string/st_repContrasena"/>
+
+        <EditText
+            android:id="@+id/et_repContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLength="20"
+            android:ems="20"
+            android:inputType="textWebPassword"
+            android:hint="@string/st_repContrasena"/>
+    </LinearLayout>
+
+</LinearLayout>

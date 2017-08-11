@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".Main">
+
+    <item android:id="@+id/it_actualizar"
+        android:title="@string/st_actualizar"
+        android:orderInCategory="50"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/it_horarios"
+        android:title="@string/st_horarios"
+        android:orderInCategory="75"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/it_todoPersonal"
+        android:title="@string/st_personal"
+        android:orderInCategory="80"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/it_configuracion"
+        android:title="@string/st_configuracion"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
+</menu>

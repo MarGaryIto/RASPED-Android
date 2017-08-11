@@ -46,5 +46,4 @@ public class CuadrosDialogo extends DialogFragment {
         AlertDialog alert = builder.create();
         alert.show();
     }
-
 }

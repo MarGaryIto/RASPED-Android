@@ -1,15 +1,17 @@
 package com.example.adminprospera.rasped_tool;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -17,6 +19,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,7 +38,7 @@ public class AdministradorActivity extends AppCompatActivity {
     //Generar variables globales para esta clase
     TabLayout tl_ad;
     ViewPager vp_ad;
-    FloatingActionButton fab_personal,fab_horarios,fab_puestos;
+    FloatingActionButton fab_personal;
     Toolbar tb_ad;
     JSONArray jsonArray = null;
     String linkAsistencias = "https://rasped.herokuapp.com/content/asistencias.php";
@@ -43,8 +46,6 @@ public class AdministradorActivity extends AppCompatActivity {
     String linkFaltas = "https://rasped.herokuapp.com/content/faltas.php";
     CuadrosDialogo cuadrosDialogo;
 
-
-    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -59,24 +60,35 @@ public class AdministradorActivity extends AppCompatActivity {
         vp_ad = (ViewPager) findViewById(R.id.vp_ad);
         tl_ad = (TabLayout) findViewById(R.id.tl_ad);
         fab_personal = (FloatingActionButton) findViewById(R.id.fab_anadeUsuario);
-        fab_horarios = (FloatingActionButton) findViewById(R.id.fab_anadeHorario);
-        fab_puestos = (FloatingActionButton) findViewById(R.id.fab_anadePuesto);
         tb_ad = (Toolbar) findViewById(R.id.tb_ad);
 
         //poblar el viewPager con su TabLayout (pestañas y contenido de ellas)
         setupViewPager(vp_ad);
         tl_ad.setupWithViewPager(vp_ad);
 
-        //configurar los Floating Action Buttons (FAB) y sus respectivas tareas
-        cerrarTodosFAB();
-        abrirFAB(fab_personal);
-        TareasFAB();
-
-        //asignar un escuchador para el vp_ad en caso de ser scrolleado,seleccionado un item
-        vp_ad.addOnPageChangeListener(onPageChangeListener);
-
         //poblar titulo y subtitulo de ActionBar
         poblarActionBar();
+
+        fab_personal.setOnClickListener(listenerFAB);
+
+        evaluarConexion();
+    }
+
+    //comprobar si la Network es habilitada
+    public boolean conexcionInternet() {
+        try {
+            Context context = getBaseContext();
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
+        }catch (Exception e){
+            //Toast.makeText(context,e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+
+    //evalua conexion
+    private void evaluarConexion(){
 
         if (conexcionInternet()){
             mostrarToast("conextado");
@@ -84,7 +96,6 @@ public class AdministradorActivity extends AppCompatActivity {
         }else {
             mostrarToast("desconectado");
         }
-
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,22 +135,32 @@ public class AdministradorActivity extends AppCompatActivity {
     }
 
 
-    //metodo privado que llena el arreglo arrayIdSedes que llena el lv_ad_personal
+    //metodo privado que extrae datos de la base de datos remotos auxiliado de un JavaScript Object
+    // Notation (JSON) y almacenarlos en memoria temporal
     private void llenaPrefersAsistencias(String json){
         try{
-            //preparar el arreglo JSON
-            jsonArray = new JSONArray(json);
-            int registros = jsonArray.length();
-            //preparar el arreglo Android
 
+            //preparar el objeto JSON que contiene los datos de la consulta a la base de datos
+            jsonArray = new JSONArray(json);
+
+            //asigna a una variable el numero de registros de la consulta
+            int registros = jsonArray.length();
+
+            //prepara un archivo temporal llamado sp_asistencias
             Context context = this.getApplicationContext();
             SharedPreferences sp_asistencias = context.getSharedPreferences(getString(R.string.sp_asistencias_key),Context.MODE_PRIVATE);
+
+            //prepara un editor que permitira poblar el archivo temporal sp_asistencias
             @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_asistencias.edit();
 
+            //ejecucion de un ciclo, se repetira segun el numero de registros existentes
             for (int i=0;i<registros;i++){
-                //preparar un objeto JSON para la extraccion de datos
+
+                //prepara el registro numero i al que se le extraera cada valor
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
 
+                //el editor poblara de strings con una llave y un valor, la llave identifica el
+                // registro, el valor sera extraido del registro i tal como el cupo
                 editor.putString("asistencias"+getString(R.string.sp_cupoPersonal_key)+i,jsonObject.getString("cupo"));
                 editor.putString("asistencias"+getString(R.string.sp_id_personal_key)+i,jsonObject.getString("id_personal"));
                 editor.putString("asistencias"+getString(R.string.sp_id_asistencias_key)+i,jsonObject.getString("id_asistencias"));
@@ -151,13 +172,39 @@ public class AdministradorActivity extends AppCompatActivity {
                 editor.putString("asistencias"+getString(R.string.sp_hr_comida_i_key)+i,jsonObject.getString("hr_comida_i"));
                 editor.putString("asistencias"+getString(R.string.sp_hr_comida_f_key)+i,jsonObject.getString("hr_comida_f"));
                 editor.putString("asistencias"+getString(R.string.sp_hr_salida_key)+i,jsonObject.getString("hr_salida"));
-
             }
+
+            int registrosViejos = sp_asistencias.getInt(getString(R.string.sp_numAsistencias_key),0);
+
+            //finalmente se almancena el numero de asistencias registradas en los datos temporales
             editor.putInt(getString(R.string.sp_numAsistencias_key),registros);
+
+            //una vez ingresados los datos en el sp_asistencias se cierra el editso
             editor.apply();
+
+            notificacionesDesde(registrosViejos);
+
         }catch (JSONException e){
+
+            //el contenido de catch se ejecutara solo en caso de que el contenido del try haya tenido
+            // errores, en este caso se extrae el error y se muestra en un cuadro de dialogo
             cuadrosDialogo.cuadroDialogo("ok",e.toString(),e.getMessage(),this);
         }
+    }
+
+    private void notificacionesDesde(int registrosViejos){
+        Context context = this.getApplicationContext();
+        SharedPreferences sp_asistencias = context.getSharedPreferences(getString(R.string.sp_asistencias_key),Context.MODE_PRIVATE);
+        int nuevosRegistros = sp_asistencias.getInt(getString(R.string.sp_numAsistencias_key),0);
+        String cadena = "";
+        while (registrosViejos<nuevosRegistros){
+            String personal = sp_asistencias.getString("asistencias"+getString(R.string.sp_nombre_personal_key)+registrosViejos,"null");
+            String entrada = sp_asistencias.getString("asistencias"+getString(R.string.sp_hr_entrada_key)+registrosViejos,"null");
+            cadena += "\n"+personal+" | "+entrada;
+            registrosViejos+=1;
+        }
+        mostrarNotificacion(cadena);
+
     }
 
     //metodo privado que llena el arreglo arrayIdSedes que llena el lv_ad_personal
@@ -178,7 +225,7 @@ public class AdministradorActivity extends AppCompatActivity {
 
                 editor.putString("retardos"+getString(R.string.sp_id_personal_key)+i,jsonObject.getString("id_personal"));
                 editor.putString("retardos"+getString(R.string.sp_cupoPersonal_key)+i,jsonObject.getString("cupo"));
-                editor.putString("retardos"+getString(R.string.sp_id_retardos_key)+i,jsonObject.getString("id_retardos"));
+                editor.putString("retardos"+getString(R.string.sp_id_retardos_key)+i,jsonObject.getString("id_asistencias"));
                 editor.putString("retardos"+getString(R.string.sp_nombre_personal_key)+i,jsonObject.getString("nombre_personal"));
                 editor.putString("retardos"+getString(R.string.sp_apellido_m_key)+i,jsonObject.getString("apellido_m"));
                 editor.putString("retardos"+getString(R.string.sp_apellido_p_key)+i,jsonObject.getString("apellido_p"));
@@ -228,159 +275,61 @@ public class AdministradorActivity extends AppCompatActivity {
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //comprobar si la Network es habilitada
-    public boolean conexcionInternet() {
-        try {
-            Context context = getBaseContext();
-            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
-        }catch (Exception e){
-            mostrarToast(e.getMessage());
-        }
-        return false;
-    }
-
-    //declaracion del escuchador para asignarse a un ViewPager
-    ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+    View.OnClickListener listenerFAB = new View.OnClickListener() {
         @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            //devuelve valores del la pagina scrolleada
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            //devuelve un numero entero para indicar la pestaña activa o seleccionada desde el 0
-            //al activar o seleccionar una nueva pestaña cerrar cualquier FAB abierto
-            cerrarTodosFAB();
-
-            //posterior a cerrar un FAB anterior, se abrira un nuevo FAB segun su pestaña
-            switch (position){
-                case 0:
-                    //en caso de que la pestaña activa sea la 0 abrir el fab de añadir personal
-                    abrirFAB(fab_personal);
-                    break;
-                case 1:
-                    //en caso de que la pestaña activa sea la 1 abrir el fab de añadir horario
-                    abrirFAB(fab_horarios);
-                    break;
-                case 2:
-                    //en caso de que la pestaña activa sea la 2 abrir el fab de añadir puesto
-                    abrirFAB(fab_puestos);
-                    break;
-            }
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-            //devuelve es estado del scroll en un identificador de tipo int
+        public void onClick(View v) {
+            abrirPersonalActivity();
         }
     };
-
-    //metodo privado que asigna a los FAB un escuchador y una accion al ser activados respectivamente
-    private void TareasFAB(){
-        //escuchador y actividad para el FAB de añadir personal
-        fab_personal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                abrirPersonalActivity();
-            }
-        });
-        //escuchador y actividad para el FAB de añadir horario
-        fab_horarios.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                abrirHorariosActivity();
-            }
-        });
-        //escuchador y actividad para el FAB de añadir puesto
-        fab_puestos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sbrirPuestosActivity();
-            }
-        });
-    }
-
-    //metodo privado para abrir personalActivity
-    private void abrirAccederActivity(){
-        Intent intent = new Intent(this, AccederActivity.class);
-        startActivityForResult(intent,0);
-        finish();
-    }
 
     //metodo privado para abrir personalActivity
     private void abrirPersonalActivity(){
         Intent intent = new Intent(this, PersonalActivity.class);
-        startActivityForResult(intent,0);
-        //finish();
-    }
-
-    //metodo privado para abrir horariosActivity
-    private void abrirHorariosActivity(){
-        Intent intent = new Intent(this, HorariosActivity.class);
-        startActivityForResult(intent,0);
-        //finish();
-    }
-
-    //metodo privado para abrir puestosActivity
-    private void sbrirPuestosActivity(){
-        Intent intent = new Intent(this, PersonalActivity.class);
+        intent.putExtra("editar",false);
         startActivityForResult(intent,0);
         //finish();
     }
 
     //metodo privado para abrir confiuracionActivity
     private void abrirConfiguracionActivity(){
-        Intent intent = new Intent(this, ConfiguracionActivity.class);
+        startActivity(new Intent(this, SettingsActivity.class));
+        //Intent intent = new Intent(this, SettingsActivity.class);
+        //startActivityForResult(intent,0);
+        //finish();
+    }
+
+    //metodo privado para abrir confiuracionActivity
+    private void abrirTodosHorarios(){
+        Intent intent = new Intent(this, TodosHorariosActivity.class);
         startActivityForResult(intent,0);
         //finish();
     }
 
-    //metodo para cerrar un FAB con su respectiva animacion
-    private void cerrarFAB(FloatingActionButton FAB){
-        FAB.animate()
-                .scaleX(0)
-                .scaleY(0)
-                .setDuration(400);
-        FAB.hide();
-    }
-
-    //metodo para abrir un FAB con su respectiva animacion
-    private void abrirFAB(FloatingActionButton FAB){
-        FAB.show();
-        FAB.setScaleX(0);
-        FAB.setScaleY(0);
-        FAB.animate()
-                .scaleX(1)
-                .scaleY(1)
-                .setDuration(400);
-    }
-
-    //metodo privado que cierra todos los FAB
-    private void cerrarTodosFAB(){
-        cerrarFAB(fab_horarios);
-        cerrarFAB(fab_personal);
-        cerrarFAB(fab_puestos);
+    //metodo privado para abrir confiuracionActivity
+    private void abrirTodoPersonal(){
+        Intent intent = new Intent(this, TodoPersonalActivity.class);
+        startActivityForResult(intent,0);
+        //finish();
     }
 
     //metodo privado para asignarle titulo y subtitulo al toolbar con los datos de usuario
     private void poblarActionBar(){
         Context context = this.getApplicationContext();
         SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
+        String sede = sp_datosPersonal.getString(getString(R.string.sp_cupoPersonal_key),"null");
         String cupo = sp_datosPersonal.getString(getString(R.string.sp_cupoPersonal_key),"null");
         String nombre_personal = sp_datosPersonal.getString(getString(R.string.sp_nombrePersonal_key),"null");
         String apellidos = sp_datosPersonal.getString(getString(R.string.sp_apellidoPPersonal_key),"null");
+        String lada = sp_datosPersonal.getString(getString(R.string.sp_ladaPersonal_key),"null");
         String telefono = sp_datosPersonal.getString(getString(R.string.sp_telefonoPersonal_key),"null");
         String puesto = sp_datosPersonal.getString(getString(R.string.sp_puestoPersonal_key),"null");
         tb_ad.setTitle(puesto +" | "+ nombre_personal +" "+ apellidos);
-        tb_ad.setSubtitle(cupo +" | "+ telefono);
+        tb_ad.setSubtitle(sede+cupo +" | "+ lada+telefono);
 
         //configurar el toolbar con un estilo personalizado en este caso con ab_personal
-        tb_ad.inflateMenu(R.menu.ab_personal);
+        tb_ad.inflateMenu(R.menu.ab_administrador);
         tb_ad.setOnMenuItemClickListener(onMenuItemClickListener);
+
     }
 
     //escuchador para el toolbar, asignando una accion al activar un item
@@ -388,14 +337,17 @@ public class AdministradorActivity extends AppCompatActivity {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()){
+                case R.id.it_todoPersonal:
+                    abrirTodoPersonal();
+                    break;
+                case R.id.it_horarios:
+                    abrirTodosHorarios();
+                    break;
                 case R.id.it_configuracion:
                     abrirConfiguracionActivity();
                     break;
                 case R.id.it_actualizar:
                     actualizarTablas();
-                    break;
-                case R.id.it_cerrarSesion:
-                    cerrarSesion();
                     break;
             }
             return false;
@@ -404,27 +356,6 @@ public class AdministradorActivity extends AppCompatActivity {
 
     private void actualizarTablas(){
         //code
-    }
-
-    //metodo privado para cerrar sesion
-    private void cerrarSesion(){
-        //obtencon de context
-        Context context = this.getApplicationContext();
-
-        //extraer archivos temporales
-        SharedPreferences sp_datosPersonal =
-                context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),
-                        Context.MODE_PRIVATE);
-        SharedPreferences sp_datosPuestos =
-                context.getSharedPreferences(getString(R.string.sp_datosPuestos_key),
-                        Context.MODE_PRIVATE);
-
-        //limpiar los archivos temporales
-        sp_datosPersonal.edit().clear().apply();
-        sp_datosPuestos.edit().clear().apply();
-
-        //cerrar este activity y abrir AccederActivity
-        abrirAccederActivity();
     }
 
     //metodo privado que codifica el contenido del viewPager(pestañas superiores)
@@ -478,5 +409,32 @@ public class AdministradorActivity extends AppCompatActivity {
 
         Toast toast = Toast.makeText(context, mensaje, duration);
         toast.show();
+    }
+
+    public void mostrarNotificacion(String mensj) {
+
+        //construccion del notification
+        NotificationCompat.Builder mBuilder;
+        NotificationManager mNotifyMgr =(NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+
+        //parametros del la notificacion almacenados en variables
+        int icono = R.drawable.ic_stat_name;//icono
+        Intent i=new Intent(this, AdministradorActivity.class);//donde se ejecuta,a donde lleva
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, 0);//preparacion
+        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);//sonido
+
+        //asignacion de parametros
+        mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(getApplicationContext())
+                .setContentIntent(pendingIntent)//actividad a realizar
+                .setSmallIcon(icono)//icono
+                .setContentTitle(getString(R.string.app_name))//titulo
+                .setContentText(mensj)//mensaje
+                .setVibrate(new long[] {100, 250, 100, 500})//vibracion
+                .setAutoCancel(false)//cancelar automaticamente(no)
+                .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                .setSound(defaultSound);//sonido
+
+        //mostrar notificacion
+        mNotifyMgr.notify(1, mBuilder.build());
     }
 }
