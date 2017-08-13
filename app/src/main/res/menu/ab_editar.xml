@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/it_eliminar"
-        android:icon="@drawable/ic_delete_forever"
+        android:icon="@drawable/ic_eliminar"
         android:orderInCategory="100"
         android:title="@string/st_eliminar"
         app:showAsAction="always"
@@ -15,7 +15,7 @@
 
     <item
         android:id="@+id/it_cancelar"
-        android:icon="@drawable/ic_action_cancel"
+        android:icon="@drawable/ic_cancelar"
         android:orderInCategory="100"
         android:title="@string/st_cancelar"
         app:showAsAction="always"
@@ -23,7 +23,7 @@
 
     <item
         android:id="@+id/it_aceptar"
-        android:icon="@drawable/ic_action_accept"
+        android:icon="@drawable/ic_aceptar"
         android:orderInCategory="100"
         android:title="@string/st_aceptar"
         app:showAsAction="always"
