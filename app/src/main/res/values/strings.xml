@@ -206,4 +206,5 @@
     <string name="st_agregar">Add</string>
     <string name="st_administrador">Admin</string>
     <string name="st_registrador">Register</string>
+    <string name="st_nuevoRetardo">New delay</string>
 </resources>

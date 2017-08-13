@@ -10,6 +10,7 @@ import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
@@ -45,6 +46,10 @@ public class AdministradorActivity extends AppCompatActivity {
     String linkRetardos = "https://rasped.herokuapp.com/content/retardos.php";
     String linkFaltas = "https://rasped.herokuapp.com/content/faltas.php";
     CuadrosDialogo cuadrosDialogo;
+    int asistViejas = 0;
+    int asistNuevas = 3;
+    // un segundo es igual a mil
+    int tiempoSync = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,43 @@ public class AdministradorActivity extends AppCompatActivity {
         fab_personal.setOnClickListener(listenerFAB);
 
         evaluarConexion();
+
+
+        hiloAsistencias();
+
+
+    }
+
+    public void hiloAsistencias(){
+        Timer timer = new Timer();
+        timer.execute();
+    }
+
+    public class Timer extends AsyncTask<Void,Integer,Boolean>{
+        @Override
+        protected Boolean doInBackground(Void... voids){
+            for (int i=1;i<3;i++){
+                esperar();
+            }
+            return true;
+        }
+        @Override
+        protected void onPostExecute(Boolean aBoolean){
+            Context context = AdministradorActivity.this.getApplicationContext();
+            SharedPreferences sp_retardos = context.getSharedPreferences(getString(R.string.sp_retardos_key),Context.MODE_PRIVATE);
+            asistViejas = sp_retardos.getInt(getString(R.string.sp_numRetardos_key),0);
+            llenarListas();
+            hiloAsistencias();
+            Toast.makeText(AdministradorActivity.this,"viejas: "+asistViejas+", nuevas: "+asistNuevas,Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void esperar(){
+        try {
+            Thread.sleep(tiempoSync);
+        } catch(InterruptedException e) {
+            mostrarNotificacion(e.getMessage());
+        }
     }
 
     //comprobar si la Network es habilitada
@@ -91,10 +133,9 @@ public class AdministradorActivity extends AppCompatActivity {
     private void evaluarConexion(){
 
         if (conexcionInternet()){
-            mostrarToast("conextado");
             llenarListas();
         }else {
-            mostrarToast("desconectado");
+            mostrarToast("sin conexion");
         }
     }
 
@@ -151,7 +192,7 @@ public class AdministradorActivity extends AppCompatActivity {
             SharedPreferences sp_asistencias = context.getSharedPreferences(getString(R.string.sp_asistencias_key),Context.MODE_PRIVATE);
 
             //prepara un editor que permitira poblar el archivo temporal sp_asistencias
-            @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_asistencias.edit();
+            SharedPreferences.Editor editor = sp_asistencias.edit();
 
             //ejecucion de un ciclo, se repetira segun el numero de registros existentes
             for (int i=0;i<registros;i++){
@@ -174,15 +215,12 @@ public class AdministradorActivity extends AppCompatActivity {
                 editor.putString("asistencias"+getString(R.string.sp_hr_salida_key)+i,jsonObject.getString("hr_salida"));
             }
 
-            int registrosViejos = sp_asistencias.getInt(getString(R.string.sp_numAsistencias_key),0);
-
             //finalmente se almancena el numero de asistencias registradas en los datos temporales
             editor.putInt(getString(R.string.sp_numAsistencias_key),registros);
 
             //una vez ingresados los datos en el sp_asistencias se cierra el editso
             editor.apply();
 
-            notificacionesDesde(registrosViejos);
 
         }catch (JSONException e){
 
@@ -192,20 +230,6 @@ public class AdministradorActivity extends AppCompatActivity {
         }
     }
 
-    private void notificacionesDesde(int registrosViejos){
-        Context context = this.getApplicationContext();
-        SharedPreferences sp_asistencias = context.getSharedPreferences(getString(R.string.sp_asistencias_key),Context.MODE_PRIVATE);
-        int nuevosRegistros = sp_asistencias.getInt(getString(R.string.sp_numAsistencias_key),0);
-        String cadena = "";
-        while (registrosViejos<nuevosRegistros){
-            String personal = sp_asistencias.getString("asistencias"+getString(R.string.sp_nombre_personal_key)+registrosViejos,"null");
-            String entrada = sp_asistencias.getString("asistencias"+getString(R.string.sp_hr_entrada_key)+registrosViejos,"null");
-            cadena += "\n"+personal+" | "+entrada;
-            registrosViejos+=1;
-        }
-        mostrarNotificacion(cadena);
-
-    }
 
     //metodo privado que llena el arreglo arrayIdSedes que llena el lv_ad_personal
     private void llenaPrefersRetardos(String json){
@@ -217,7 +241,7 @@ public class AdministradorActivity extends AppCompatActivity {
 
             Context context = this.getApplicationContext();
             SharedPreferences sp_retardos = context.getSharedPreferences(getString(R.string.sp_retardos_key),Context.MODE_PRIVATE);
-            @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_retardos.edit();
+            SharedPreferences.Editor editor = sp_retardos.edit();
 
             for (int i=0;i<registros;i++){
                 //preparar un objeto JSON para la extraccion de datos
@@ -236,6 +260,14 @@ public class AdministradorActivity extends AppCompatActivity {
                 editor.putString("retardos"+getString(R.string.sp_hr_salida_key)+i,jsonObject.getString("hr_salida"));
 
             }
+            asistNuevas = registros;
+            if (asistViejas!=asistNuevas){
+                JSONObject jsonObject = jsonArray.getJSONObject(asistViejas);
+                String retardo = getString(R.string.st_nuevoRetardo);
+                String personal = jsonObject.getString("nombre_personal")+" "+jsonObject.getString("apellido_m");
+                String tiempo = jsonObject.getString("hr_entrada");
+                mostrarNotificacion(retardo+" | "+personal+": "+tiempo);
+            }
             editor.putInt(getString(R.string.sp_numRetardos_key),registros);
             editor.apply();
         }catch (JSONException e){
@@ -253,7 +285,7 @@ public class AdministradorActivity extends AppCompatActivity {
 
             Context context = this.getApplicationContext();
             SharedPreferences sp_faltas = context.getSharedPreferences(getString(R.string.sp_faltas_key),Context.MODE_PRIVATE);
-            @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_faltas.edit();
+            SharedPreferences.Editor editor = sp_faltas.edit();
 
             for (int i=0;i<registros;i++){
                 //preparar un objeto JSON para la extraccion de datos
