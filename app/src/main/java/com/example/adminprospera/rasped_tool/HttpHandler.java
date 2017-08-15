@@ -234,18 +234,18 @@ public class HttpHandler {
 
     }
 
-    public String editarContrasena(String idPersonal, String nvaContrasena){
+    public String editarContrasena(String telefono, String nvaContrasena){
 
         try {
 
-            String posturl = "https://rasped.herokuapp.com/content/editar_contrasena.php";
+            String posturl = "https://rasped.herokuapp.com/content/cambiar_contrasena.php";
             HttpClient httpclient = new DefaultHttpClient();
             /*Creamos el objeto de HttpClient que nos permitira conectarnos mediante peticiones http*/
             HttpPost httppost = new HttpPost(posturl);
             /*El objeto HttpPost permite que enviemos una peticion de tipo POST a una URL especificada*/
             //AÑADIR PARAMETROS
             List<NameValuePair> params = new ArrayList<>();
-            params.add(new BasicNameValuePair("id_personal",idPersonal));
+            params.add(new BasicNameValuePair("telefono",telefono));
             params.add(new BasicNameValuePair("contrasena",nvaContrasena));
 
 		    /*Una vez añadidos los parametros actualizamos la entidad de httppost, esto quiere decir

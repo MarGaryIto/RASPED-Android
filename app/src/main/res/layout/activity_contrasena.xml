@@ -49,24 +49,4 @@
             android:hint="@string/st_nvaContrasena"/>
     </LinearLayout>
 
-    <!--Antigua contraseña-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/st_repContrasena"/>
-
-        <EditText
-            android:id="@+id/et_repContrasena"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLength="20"
-            android:ems="20"
-            android:inputType="textWebPassword"
-            android:hint="@string/st_repContrasena"/>
-    </LinearLayout>
-
 </LinearLayout>

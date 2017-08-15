@@ -91,4 +91,5 @@
     <string name="st_administrador">Administrador</string>
     <string name="st_registrador">Registrador</string>
     <string name="st_nuevoRetardo">Nuevo retardo</string>
+    <string name="st_errorContrasena">La contraseña no coincide</string>
 </resources>

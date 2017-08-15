@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,7 +37,7 @@ public class AccederActivity extends AppCompatActivity {
     String linkPuestos = "https://rasped.herokuapp.com/content/puestos.php";
     String linkHorarios = "https://rasped.herokuapp.com/content/horarios.php";
     CuadrosDialogo cuadrosDialogo;
-
+    LetrasNumerosAleatorios aleatorios = new LetrasNumerosAleatorios();
     protected int splashTime = 3000;
     String[] name = {"A","N","D","R","O","I","D"};
     int timer =0;
@@ -105,8 +106,19 @@ public class AccederActivity extends AppCompatActivity {
         alert.show();
     }
 
+    //
     private void recuperarContrasena(String telefono){
-        mostrarToast(telefono);
+        String contrasena = aleatorios.codigoAleatorio(6);
+        HttpHandler handler = new HttpHandler();
+        String resultActCon = handler.editarContrasena(telefono,contrasena);
+        Log.e("recuperarContrasena",resultActCon);
+        cuadrosDialogo.cuadroDialogo(
+                getString(R.string.st_aceptar),
+                getString(R.string.ms_contrasenaEnviada),
+                getString(R.string.st_hey),
+                AccederActivity.this
+        );
+        handler.postContrasena(telefono,contrasena);
     }
 
 
@@ -143,6 +155,7 @@ public class AccederActivity extends AppCompatActivity {
                         almacenarDatosCredencial();
                         llenarArregloPuestos();
                         llenarArregloHorarios();
+                        cargarPreferDeConfig();
                     }
 
                     //evaluacion para el usuario registrador
@@ -151,6 +164,7 @@ public class AccederActivity extends AppCompatActivity {
                     if (evaluaContrasena()){
                         almacenarDatosCredencial();
                         abrirRegistradorActivity();
+                        cargarPreferDeConfig();
                     }
 
                     //evaluacion para el usuario en general
@@ -159,6 +173,7 @@ public class AccederActivity extends AppCompatActivity {
                     if (evaluaContrasena()){
                         almacenarDatosCredencial();
                         abrirUsusariosActivity();
+                        cargarPreferDeConfig();
                     }
 
                     //si no se encontro usuario, entonces el usuario con los datos dijitados no existe
@@ -189,7 +204,7 @@ public class AccederActivity extends AppCompatActivity {
     private void almacenarDatosCredencial(){
         Context context = this.getApplicationContext();
         SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
-        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sp_datosPersonal.edit();
+        SharedPreferences.Editor editor = sp_datosPersonal.edit();
 
         editor.putString(getString(R.string.sp_idPersonal_key),arrayCredenciales[0]);
         editor.putString(getString(R.string.sp_sedePersonal_key),arrayCredenciales[1]);
@@ -202,7 +217,7 @@ public class AccederActivity extends AppCompatActivity {
         editor.putString(getString(R.string.sp_horarioPersonal_key),arrayCredenciales[9]);
         editor.putString(getString(R.string.sp_puestoPersonal_key),arrayCredenciales[10]);
         editor.putString(getString(R.string.sp_usuarioPersonal_key),arrayCredenciales[11]);
-        editor.putString("sp_contrasenaPersonal",st_contraseña);
+        editor.putString("sp_contrasenaPersonal",et_ac_contrasena.getText().toString());
         editor.apply();
     }
 
@@ -324,6 +339,10 @@ public class AccederActivity extends AppCompatActivity {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+    private void cargarPreferDeConfig(){
+        // Cargar valores por defecto
+        PreferenceManager.setDefaultValues(this, R.xml.settings, false);
+    }
     //metodo privado para llenar arreglo arrayIdSedes
     private void llenarArregloCredenciales(){
         //creacion de un hilo

@@ -40,7 +40,7 @@
         <SwitchPreference
             android:key="sp_notificarAsistencias"
             android:title="@string/pref_notificacionAsistencias"
-            android:defaultValue="true"/>
+            android:defaultValue="false"/>
 
         <!-- notificaciones para retardos -->
         <SwitchPreference

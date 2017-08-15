@@ -51,7 +51,7 @@
             android:name=".TodosHorariosActivity"
             android:label="@string/title_activity_todos_horarios"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".TodoPersonalActivity"></activity>
+        <activity android:name=".TodoPersonalActivity"/>
     </application>
 
 </manifest>

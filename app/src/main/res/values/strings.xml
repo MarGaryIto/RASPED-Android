@@ -207,4 +207,5 @@
     <string name="st_administrador">Admin</string>
     <string name="st_registrador">Register</string>
     <string name="st_nuevoRetardo">New delay</string>
+    <string name="st_errorContrasena">Password does not match</string>
 </resources>

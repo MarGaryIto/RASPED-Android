@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -46,10 +47,10 @@ public class AdministradorActivity extends AppCompatActivity {
     String linkRetardos = "https://rasped.herokuapp.com/content/retardos.php";
     String linkFaltas = "https://rasped.herokuapp.com/content/faltas.php";
     CuadrosDialogo cuadrosDialogo;
-    int asistViejas = 0;
-    int asistNuevas = 3;
+    int asisViejas,retViejas, faltViejas = 100;
+    int asisNuevas, retNuevas, faltNuevas = 0;
     // un segundo es igual a mil
-    int tiempoSync = 3000;
+    int tiempoSync = 5000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +82,6 @@ public class AdministradorActivity extends AppCompatActivity {
 
         hiloAsistencias();
 
-
     }
 
     public void hiloAsistencias(){
@@ -99,13 +99,42 @@ public class AdministradorActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(Boolean aBoolean){
+
             Context context = AdministradorActivity.this.getApplicationContext();
+
+            SharedPreferences sp_asistencias = context.getSharedPreferences(getString(R.string.sp_asistencias_key),Context.MODE_PRIVATE);
+            asisViejas = sp_asistencias.getInt(getString(R.string.sp_numAsistencias_key),0);
+
             SharedPreferences sp_retardos = context.getSharedPreferences(getString(R.string.sp_retardos_key),Context.MODE_PRIVATE);
-            asistViejas = sp_retardos.getInt(getString(R.string.sp_numRetardos_key),0);
+            retViejas = sp_retardos.getInt(getString(R.string.sp_numRetardos_key),0);
+
+            SharedPreferences sp_faltas = context.getSharedPreferences(getString(R.string.sp_faltas_key),Context.MODE_PRIVATE);
+            faltViejas = sp_faltas.getInt(getString(R.string.sp_numFaltas_key),0);
+
             llenarListas();
             hiloAsistencias();
-            Toast.makeText(AdministradorActivity.this,"viejas: "+asistViejas+", nuevas: "+asistNuevas,Toast.LENGTH_SHORT).show();
+            //Toast.makeText(AdministradorActivity.this,"asisViejas: "+asisViejas+", asisNuevas: "+asisNuevas,Toast.LENGTH_SHORT).show();
+            //Toast.makeText(AdministradorActivity.this,"retViejas: "+retViejas+", retNuevas: "+retNuevas,Toast.LENGTH_SHORT).show();
+            //Toast.makeText(AdministradorActivity.this,"faltViejas: "+faltViejas+", faltNuevas: "+faltNuevas,Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public Boolean notifAsist(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean sp_notificarAsistencias = sharedPref.getBoolean("sp_notificarAsistencias", true);
+        return sp_notificarAsistencias;
+    }
+
+    public Boolean notifRet(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean sp_notificarRetardos = sharedPref.getBoolean("sp_notificarRetardos", true);
+        return sp_notificarRetardos;
+    }
+
+    public Boolean notifFalt(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean sp_notificarInasistencias = sharedPref.getBoolean("sp_notificarInasistencias", true);
+        return sp_notificarInasistencias;
     }
 
     private void esperar(){
@@ -215,12 +244,21 @@ public class AdministradorActivity extends AppCompatActivity {
                 editor.putString("asistencias"+getString(R.string.sp_hr_salida_key)+i,jsonObject.getString("hr_salida"));
             }
 
+            //notificaciones
+            asisNuevas = registros;
+            if ((asisViejas<asisNuevas) && notifAsist()){
+                JSONObject jsonObject = jsonArray.getJSONObject(asisViejas);
+                String asistencia = getString(R.string.st_asistencia);
+                String personal = jsonObject.getString("nombre_personal")+" "+jsonObject.getString("apellido_m");
+                String tiempo = jsonObject.getString("hr_entrada");
+                mostrarNotificacion(asistencia+" | "+personal+": "+tiempo);
+            }
+
             //finalmente se almancena el numero de asistencias registradas en los datos temporales
             editor.putInt(getString(R.string.sp_numAsistencias_key),registros);
 
             //una vez ingresados los datos en el sp_asistencias se cierra el editso
             editor.apply();
-
 
         }catch (JSONException e){
 
@@ -260,10 +298,11 @@ public class AdministradorActivity extends AppCompatActivity {
                 editor.putString("retardos"+getString(R.string.sp_hr_salida_key)+i,jsonObject.getString("hr_salida"));
 
             }
-            asistNuevas = registros;
-            if (asistViejas!=asistNuevas){
-                JSONObject jsonObject = jsonArray.getJSONObject(asistViejas);
-                String retardo = getString(R.string.st_nuevoRetardo);
+            //notificaciones
+            retNuevas = registros;
+            if ((retViejas<retNuevas) && notifRet()){
+                JSONObject jsonObject = jsonArray.getJSONObject(retViejas);
+                String retardo = getString(R.string.st_retardos);
                 String personal = jsonObject.getString("nombre_personal")+" "+jsonObject.getString("apellido_m");
                 String tiempo = jsonObject.getString("hr_entrada");
                 mostrarNotificacion(retardo+" | "+personal+": "+tiempo);
@@ -300,6 +339,17 @@ public class AdministradorActivity extends AppCompatActivity {
                 editor.putString("faltas"+getString(R.string.sp_fecha_key)+i,jsonObject.getString("fecha"));
 
             }
+
+            //notificacion
+            faltViejas = registros;
+            if ((faltViejas<faltNuevas) && notifFalt()){
+                JSONObject jsonObject = jsonArray.getJSONObject(faltViejas);
+                String falta = getString(R.string.st_faltas);
+                String personal = jsonObject.getString("nombre_personal")+" "+jsonObject.getString("apellido_m");
+                String tiempo = jsonObject.getString("hr_entrada");
+                mostrarNotificacion(falta+" | "+personal+": "+tiempo);
+            }
+
             editor.putInt(getString(R.string.sp_numFaltas_key),registros);
             editor.apply();
         }catch (JSONException e){
