@@ -67,13 +67,13 @@ public class TodoPersonalActivity extends AppCompatActivity {
     AdapterView.OnItemClickListener lv_listener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            //extraer el id del personal seleccionado
+            Intent intent = new Intent(TodoPersonalActivity.this, PersonalActivity.class);
             ModelAdministrador modelAdministrador = (ModelAdministrador) adapterListView.getItem(position);
             //extraer el id del personal seleccionado
-            String i = modelAdministrador.getId_personal();
-            Intent intent = new Intent(TodoPersonalActivity.this, PersonalActivity.class);
+            String cupo = modelAdministrador.getCupo();
+            intent.putExtra("cupo",cupo);
             intent.putExtra("editar",true);
-            intent.putExtra("i",i);
-            //intent.putExtra("editar","");
             startActivityForResult(intent,0);
         }
     };
@@ -199,11 +199,16 @@ public class TodoPersonalActivity extends AppCompatActivity {
         for (int i = 0; i < dimension; i++) {
             modelAdministrador = new ModelAdministrador();
 
+            String personal = sp_datosTodoPersonal.getString("nombre_personal" + i,"null")+" "+sp_datosTodoPersonal.getString("apellido_p" + i,"null");
+            String cupo = sp_datosTodoPersonal.getString("sede" + i,"null")+sp_datosTodoPersonal.getString("cupo" + i,"null");
+
+
+
             //asignar las variables
-            modelAdministrador.setNombrePersonal(sp_datosTodoPersonal.getString("nombre_personal" + i,"null"));
-            modelAdministrador.setCupo(sp_datosTodoPersonal.getString("apellido_p" + i,"null"));
-            modelAdministrador.setFecha(sp_datosTodoPersonal.getString("horario" + i,"null"));
-            modelAdministrador.setHora(sp_datosTodoPersonal.getString("cupo" + i,"null"));
+            modelAdministrador.setNombrePersonal(personal);
+            modelAdministrador.setCupo(cupo);
+            modelAdministrador.setFecha("");
+            modelAdministrador.setHora("");
             modelAdministrador.setId_personal(sp_datosTodoPersonal.getString("i" + i,"0"));
 
             //una vez asignadas las variables, se añaden al model

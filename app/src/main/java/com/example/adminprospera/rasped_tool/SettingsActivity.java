@@ -29,7 +29,12 @@ public class SettingsActivity extends PreferenceActivity {
 
         /*Establecer el intent que contiene la ruta del activity a abrir*/
         Intent intentEditaDatos = new Intent(this, PersonalActivity.class);
+        Context context = this.getApplicationContext();
+        SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
+        String sede = sp_datosPersonal.getString(getString(R.string.sp_sedePersonal_key),"null");
+        String cupo = sp_datosPersonal.getString(getString(R.string.sp_cupoPersonal_key),"null");
         intentEditaDatos.putExtra("editar",true);
+        intentEditaDatos.putExtra("cupo",sede+cupo);
         Intent intentEditaContrasena = new Intent(this, ContrasenaActivity.class);
         Intent intentInformacion = new Intent(this, InformacionActivity.class);
 

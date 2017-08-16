@@ -44,6 +44,7 @@ public class PersonalActivity extends AppCompatActivity {
     URL urlHorarios,urlPuestos,urlTipos = null;
     String[] arraryHorarios,arrayPuestos,arrayTipos;
     int registrosHorarios,registrosPuestos,registrosTipos = 0;
+    String cupoAEditar = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -284,9 +285,9 @@ public class PersonalActivity extends AppCompatActivity {
     }
 
     private void editarDatosPersonal(){
-        String  nombre_personal = et_pe_nombre.getText().toString();
-        String apellido_m = et_pe_apPaterno.getText().toString();
-        String apellido_p = et_pe_apMaterno.getText().toString();
+        String nombre_personal = et_pe_nombre.getText().toString();
+        String apellido_p = et_pe_apPaterno.getText().toString();
+        String apellido_m = et_pe_apMaterno.getText().toString();
         String lada = et_pe_lada.getText().toString();
         String telefono = et_pe_telefono.getText().toString();
         String sede = et_pe_sede.getText().toString();
@@ -294,12 +295,10 @@ public class PersonalActivity extends AppCompatActivity {
         String contrasena = aleatorios.codigoAleatorio(dimensionCodigo);
 
         HttpHandler handler = new HttpHandler();
-        String respuesta = handler.postEditarPersonal(nombre_personal, apellido_m, apellido_p,
-                contrasena, lada, telefono,sede, cupo);
+        String respuesta = handler.editarPersonal(nombre_personal, apellido_p, apellido_m,sede, cupo);
 
         if (respuesta.equals("true")){
             edicionCorrecta();
-            enviarContrasena(lada+telefono,getString(R.string.ms_tuContrasena)+" "+contrasena);
         }else {
             errorEdicion("Error: "+respuesta);
         }
@@ -339,17 +338,58 @@ public class PersonalActivity extends AppCompatActivity {
     }
 
     private void llenarCampos(){
-        Context context = this.getApplicationContext();
-        SharedPreferences sp_datosPersonal = context.getSharedPreferences(getString(R.string.sp_datosPersonal_key),Context.MODE_PRIVATE);
+        cupoAEditar = getIntent().getExtras().getString("cupo","");
+        final String linkPersonal = "https://rasped.herokuapp.com/content/personal_por_cupo.php?cupo="+cupoAEditar;
+        //creacion de un hilo
+        Thread tr = new Thread(){
+            @Override
+            public void run(){
 
+                //casteo de una clase exterior
+                MetodosJson metodosJson = new MetodosJson();
 
-        et_pe_nombre.setText(sp_datosPersonal.getString(getString(R.string.sp_nombrePersonal_key),"null"));
-        et_pe_apPaterno.setText(sp_datosPersonal.getString(getString(R.string.sp_apellidoPPersonal_key),"null"));
-        et_pe_apMaterno.setText(sp_datosPersonal.getString(getString(R.string.sp_apellidoMPersonal_key),"null"));
-        et_pe_lada.setText(sp_datosPersonal.getString(getString(R.string.sp_ladaPersonal_key),"null"));
-        et_pe_telefono.setText(sp_datosPersonal.getString(getString(R.string.sp_telefonoPersonal_key),"null"));
-        et_pe_sede.setText(sp_datosPersonal.getString(getString(R.string.sp_sedePersonal_key),"null"));
-        et_pe_cupo.setText(sp_datosPersonal.getString(getString(R.string.sp_cupoPersonal_key),"null"));
+                //crear variables url con el link
+                URL urlPersonal = metodosJson.crearURL(linkPersonal);
+
+                //obtencion del json atraves de la clase exterior y la url
+                final String jsonPersonal = metodosJson.obtenerJSON(urlPersonal);
+
+                //creacion de un runOnUiThread para usar la clase llenaArreglo()
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
+                            //preparar el objeto JSON que contendra los resultados de una consulta de base de datos
+                            JSONArray jsonArrayPersonal = new  JSONArray(jsonPersonal);
+                            //personal
+                            JSONObject jsonObject = jsonArrayPersonal.getJSONObject(0);
+
+                            String personal = jsonObject.getString("nombre_personal");
+                            String apellidoP = jsonObject.getString("apellido_p");
+                            String apellidoM = jsonObject.getString("apellido_m");
+                            String lada = jsonObject.getString("lada");
+                            String telefono = jsonObject.getString("telefono");
+                            String sede = jsonObject.getString("sede");
+                            String cupo = jsonObject.getString("cupo");
+
+                            et_pe_nombre.setText(personal);
+                            et_pe_apPaterno.setText(apellidoP);
+                            et_pe_apMaterno.setText(apellidoM);
+                            et_pe_lada.setText(lada);
+                            et_pe_telefono.setText(telefono);
+                            et_pe_sede.setText(sede);
+                            et_pe_cupo.setText(cupo);
+
+                        }catch (JSONException e){
+                            mostrarToast("error: "+e.getMessage());
+                        }
+
+                    }
+                });
+            }
+        };
+        //ejecucion del hilo
+        tr.run();
     }
 
     private void enviarContrasena(String telefono,String contrasena){

@@ -266,5 +266,41 @@ public class HttpHandler {
 
     }
 
+    public String editarPersonal(String nombre_personal, String apellido_p, String apellido_m,
+    String sede, String cupo){
+
+        try {
+
+            String posturl = "https://rasped.herokuapp.com/content/editar_personal.php";
+            HttpClient httpclient = new DefaultHttpClient();
+            /*Creamos el objeto de HttpClient que nos permitira conectarnos mediante peticiones http*/
+            HttpPost httppost = new HttpPost(posturl);
+            /*El objeto HttpPost permite que enviemos una peticion de tipo POST a una URL especificada*/
+            //AÑADIR PARAMETROS
+            List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("nombre_personal",nombre_personal));
+            params.add(new BasicNameValuePair("apellido_p ",apellido_p ));
+            params.add(new BasicNameValuePair("apellido_m ",apellido_m ));
+            params.add(new BasicNameValuePair("sede ",sede ));
+            params.add(new BasicNameValuePair("cupo ",cupo ));
+
+		    /*Una vez añadidos los parametros actualizamos la entidad de httppost, esto quiere decir
+		    en pocas palabras anexamos los parametros al objeto para que al enviarse al servidor
+		    envien los datos que hemos añadido*/
+            httppost.setEntity(new UrlEncodedFormEntity(params));
+
+            /*Finalmente ejecutamos enviando la info al server*/
+            HttpResponse resp = httpclient.execute(httppost);
+            HttpEntity ent = resp.getEntity();/*y obtenemos una respuesta*/
+
+            String text = EntityUtils.toString(ent);
+
+            return text;
+
+        }
+        catch(Exception e) { return e.toString();}
+
+    }
+
 
 }
